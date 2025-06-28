@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [vue()],
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ['lucide-vue-next'],
   },
   build: {
     rollupOptions: {
@@ -25,4 +25,4 @@ export default defineConfig({
     port: 4173,
     host: true,
   },
-});
+})
