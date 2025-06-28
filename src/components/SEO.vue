@@ -36,14 +36,11 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" :href="siteData.siteUrl" />
-
-    <!-- Structured Data -->
-    <script type="application/ld+json" v-html="structuredDataJson"></script>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { onMounted } from 'vue'
 
 const siteData = {
   title: "Radio Santana - Tu Radio Virtual | Música y Entretenimiento 24/7",
@@ -82,5 +79,12 @@ const structuredData = {
   ]
 }
 
-const structuredDataJson = computed(() => JSON.stringify(structuredData))
+// Add structured data using JavaScript instead of template script tag
+onMounted(() => {
+  const script = document.createElement('script')
+  script.type = 'application/ld+json'
+  script.textContent = JSON.stringify(structuredData)
+  document.head.appendChild(script)
+})
 </script>
+</template>
