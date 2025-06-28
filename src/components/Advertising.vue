@@ -87,17 +87,13 @@
           Conoce Nuestro Alcance
         </h3>
         
-        <div class="aspect-video max-w-4xl mx-auto rounded-2xl overflow-hidden bg-dark-600 flex items-center justify-center">
-          <div class="text-center">
-            <div class="w-20 h-20 bg-gradient-gold rounded-full flex items-center justify-center mx-auto mb-4">
-              <Megaphone class="w-10 h-10 text-dark-900" />
-            </div>
-            <h4 class="text-xl font-semibold text-white mb-2">Video Promocional</h4>
-            <p class="text-silver-400 mb-4">Descubre el poder de la publicidad en Radio Santana</p>
-            <button class="bg-gradient-gold text-dark-900 px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform">
-              Reproducir Video
-            </button>
-          </div>
+        <div class="max-w-4xl mx-auto">
+          <YouTubePlayer
+            :video-id="promoVideoId"
+            title="Radio Santana - Video Promocional"
+            description="Descubre el poder de la publicidad en Radio Santana y cómo podemos ayudar a hacer crecer tu negocio"
+            :autoplay="true"
+          />
         </div>
       </div>
 
@@ -123,6 +119,10 @@
 
 <script setup lang="ts">
 import { Megaphone, TrendingUp, Target, BarChart3 } from 'lucide-vue-next'
+import YouTubePlayer from './YouTubePlayer.vue'
+
+// ID del video de YouTube (puedes cambiarlo por el ID de tu video promocional)
+const promoVideoId = 'dQw4w9WgXcQ' // Video de ejemplo - cambiar por tu video real
 
 const adPackages = [
   {
