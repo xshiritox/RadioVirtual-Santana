@@ -1,11 +1,63 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Headphones, Clock, Users } from 'lucide-react';
 
+// Función para formatear el número de oyentes
+const formatListeners = (count: number): string => {
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K+`;
+  }
+  return count.toString();
+};
+
 const Hero: React.FC = () => {
+  const [listeners, setListeners] = useState<number>(0);
+
+  // Simulación de actualización de oyentes (reemplazar con llamada real a la API)
+  useEffect(() => {
+    // Esta es una función simulada - reemplazar con la llamada real a tu API
+    const fetchListeners = async () => {
+      try {
+        // Ejemplo de cómo sería una llamada real (descomenta y configura según tu proveedor):
+        // const response = await fetch('TU_API_DE_ESTADISTICAS');
+        // const data = await response.json();
+        // setListeners(data.listeners || 0);
+        
+        // Simulación temporal (eliminar cuando se implemente la API real)
+        const simulatedListeners = Math.floor(Math.random() * 500) + 50; // Número aleatorio entre 50 y 550
+        setListeners(simulatedListeners);
+      } catch (error) {
+        console.error('Error al obtener oyentes:', error);
+      }
+    };
+
+    // Obtener oyentes al cargar
+    fetchListeners();
+    
+    // Actualizar cada 30 segundos
+    const interval = setInterval(fetchListeners, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   const stats = [
-    { icon: Users, value: '10K+', label: 'Oyentes' },
-    { icon: Clock, value: '24/7', label: 'En Vivo' },
-    { icon: Headphones, value: '100%', label: 'Digital' },
+    { 
+      icon: Users, 
+      value: listeners > 0 ? formatListeners(listeners) : '...', 
+      label: 'Oyentes',
+      description: 'En vivo ahora'
+    },
+    { 
+      icon: Clock, 
+      value: '24/7', 
+      label: 'En Vivo',
+      description: 'Transmisión continua'
+    },
+    { 
+      icon: Headphones, 
+      value: '100%', 
+      label: 'Digital',
+      description: 'Alta calidad'
+    }
   ];
 
   return (

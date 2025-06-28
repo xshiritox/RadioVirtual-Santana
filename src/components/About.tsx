@@ -25,12 +25,6 @@ const About: React.FC = () => {
     }
   ];
 
-  const achievements = [
-    { number: '5+', label: 'Años al Aire' },
-    { number: '10K+', label: 'Oyentes Mensuales' },
-    { number: '50+', label: 'Programas Únicos' },
-    { number: '24/7', label: 'Transmisión Continua' }
-  ];
 
   return null;
 };
