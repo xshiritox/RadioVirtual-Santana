@@ -20,8 +20,29 @@
         </p>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-12">
+        <div class="inline-flex items-center space-x-2 text-gold-400">
+          <div class="w-4 h-4 bg-gold-400 rounded-full animate-pulse"></div>
+          <span>Cargando programación...</span>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center py-12">
+        <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+          <p class="text-red-400 mb-4">Error al cargar la programación</p>
+          <button 
+            @click="refetch"
+            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+
       <!-- Programs Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      <div v-else-if="programs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
         <div
           v-for="(program, index) in programs"
           :key="program.id"
@@ -39,9 +60,10 @@
           <!-- Program Image -->
           <div class="relative h-48 overflow-hidden">
             <img
-              :src="program.image"
+              :src="program.image || 'https://images.pexels.com/photos/3714513/pexels-photo-3714513.jpeg?auto=compress&cs=tinysrgb&w=800'"
               :alt="program.title"
               class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              @error="onImageError"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-dark-900/80 via-transparent to-transparent"></div>
             
@@ -49,6 +71,12 @@
             <div class="absolute bottom-4 left-4 flex items-center space-x-2">
               <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span class="text-white text-sm font-medium">EN VIVO</span>
+            </div>
+
+            <!-- Real-time Update Indicator -->
+            <div v-if="isRecentlyUpdated(program)" class="absolute top-4 left-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
+              <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <span>Actualizado</span>
             </div>
           </div>
 
@@ -76,7 +104,7 @@
             <!-- Days -->
             <div class="flex flex-wrap gap-2">
               <span
-                v-for="day in program.days"
+                v-for="day in (program.days || [])"
                 :key="day"
                 class="bg-gold-400/20 text-gold-400 px-2 py-1 rounded-lg text-xs font-medium"
               >
@@ -90,71 +118,51 @@
         </div>
       </div>
 
+      <!-- Empty State -->
+      <div v-else class="text-center py-12">
+        <div class="bg-dark-700/50 border border-gold-400/20 rounded-2xl p-8 max-w-md mx-auto">
+          <Calendar class="w-16 h-16 text-gold-400 mx-auto mb-4 opacity-50" />
+          <h3 class="text-xl font-semibold text-white mb-2">No hay programas disponibles</h3>
+          <p class="text-silver-400 text-sm">Los programas aparecerán aquí una vez que sean agregados desde el panel de administración.</p>
+        </div>
+      </div>
+
       <!-- View All Button -->
-      <div class="text-center mt-12">
+      <div v-if="programs.length > 0" class="text-center mt-12">
         <button class="bg-dark-700 border border-gold-400/30 text-gold-400 px-8 py-3 rounded-full hover:bg-gold-400 hover:text-dark-900 transition-all duration-300 font-medium">
           Ver Programación Completa
         </button>
+      </div>
+
+      <!-- Real-time Status Indicator -->
+      <div class="fixed bottom-20 left-6 z-40 bg-dark-800/90 backdrop-blur-md border border-gold-400/30 rounded-full px-4 py-2 flex items-center space-x-2">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <span class="text-green-400 text-sm font-medium">Tiempo Real</span>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { Clock, Mic, Calendar, Star } from 'lucide-vue-next'
+import { useFirestore } from '../composables/useFirestore'
 
-interface Program {
-  id: string
-  title: string
-  host: string
-  time: string
-  description: string
-  days: string[]
-  image: string
-  featured: boolean
+const { data: programs, loading, error, refetch } = useFirestore('programs')
+
+// Check if a program was recently updated (within last 5 minutes)
+const isRecentlyUpdated = (program: any) => {
+  if (!program.updatedAt) return false
+  
+  const updatedAt = program.updatedAt.toDate ? program.updatedAt.toDate() : new Date(program.updatedAt)
+  const now = new Date()
+  const diffInMinutes = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
+  
+  return diffInMinutes < 5
 }
 
-const programs = ref<Program[]>([
-  {
-    id: '1',
-    title: 'Buenos Días Santana',
-    host: 'María González',
-    time: '06:00 - 10:00',
-    description: 'Comienza tu día con la mejor música y noticias locales.',
-    days: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
-    image: 'https://images.pexels.com/photos/3714513/pexels-photo-3714513.jpeg?auto=compress&cs=tinysrgb&w=800',
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'Música Sin Límites',
-    host: 'Carlos Ramírez',
-    time: '14:00 - 18:00',
-    description: 'Los mejores éxitos de todos los tiempos y géneros.',
-    days: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
-    image: 'https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg?auto=compress&cs=tinysrgb&w=800',
-    featured: false
-  },
-  {
-    id: '3',
-    title: 'Noches de Jazz',
-    host: 'Ana Martínez',
-    time: '21:00 - 00:00',
-    description: 'Relájate con los mejores clásicos del jazz internacional.',
-    days: ['Vie', 'Sáb'],
-    image: 'https://images.pexels.com/photos/416405/pexels-photo-416405.jpeg?auto=compress&cs=tinysrgb&w=800',
-    featured: true
-  },
-  {
-    id: '4',
-    title: 'Domingo Familiar',
-    host: 'Pedro Silva',
-    time: '10:00 - 14:00',
-    description: 'Programas familiares, concursos y música para todos.',
-    days: ['Dom'],
-    image: 'https://images.pexels.com/photos/3811104/pexels-photo-3811104.jpeg?auto=compress&cs=tinysrgb&w=800',
-    featured: false
-  }
-])
+const onImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = 'https://images.pexels.com/photos/3714513/pexels-photo-3714513.jpeg?auto=compress&cs=tinysrgb&w=800'
+}
 </script>

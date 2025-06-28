@@ -3,7 +3,14 @@
     <div class="bg-dark-800 border border-gold-400/30 rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
       <!-- Header -->
       <div class="flex items-center justify-between p-6 border-b border-gold-400/20">
-        <h2 class="text-2xl font-bold text-gold-400">Panel de Administración</h2>
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl font-bold text-gold-400">Panel de Administración</h2>
+          <!-- Real-time Status -->
+          <div class="flex items-center space-x-2 bg-green-900/30 border border-green-500/30 rounded-full px-3 py-1">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span class="text-green-400 text-sm font-medium">Tiempo Real</span>
+          </div>
+        </div>
         <button
           @click="$emit('close')"
           class="text-silver-400 hover:text-gold-400 transition-colors"
@@ -81,7 +88,7 @@
               <h3 class="text-lg font-semibold text-white">
                 Bienvenido, {{ user.email }}
               </h3>
-              <p class="text-silver-400 text-sm">Panel de administración de Radio Santana</p>
+              <p class="text-silver-400 text-sm">Panel de administración de Radio Santana - Actualizaciones en tiempo real</p>
             </div>
             <button
               @click="logout"
@@ -98,18 +105,28 @@
               :key="tab.id"
               @click="activeTab = tab.id"
               :class="[
-                'px-4 py-2 rounded-lg font-medium transition-all duration-300',
+                'px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2',
                 activeTab === tab.id
                   ? 'bg-gradient-gold text-dark-900'
                   : 'bg-dark-700 text-silver-400 hover:text-gold-400'
               ]"
             >
-              {{ tab.label }}
+              <component :is="tab.icon" class="w-4 h-4" />
+              <span>{{ tab.label }}</span>
             </button>
           </div>
 
           <!-- Programs Tab -->
           <div v-if="activeTab === 'programs'" class="space-y-6">
+            <!-- Real-time Status for Programs -->
+            <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 flex items-center space-x-3">
+              <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <div>
+                <p class="text-green-400 font-medium">Sincronización en Tiempo Real Activa</p>
+                <p class="text-green-300 text-sm">Los cambios se reflejan automáticamente en el sitio web</p>
+              </div>
+            </div>
+
             <!-- Add New Program -->
             <div class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-6">
               <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
@@ -122,63 +139,127 @@
                   type="text"
                   placeholder="Título del programa"
                   v-model="newProgram.title"
-                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 />
                 <input
                   type="text"
                   placeholder="Presentador"
                   v-model="newProgram.host"
-                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 />
                 <input
                   type="text"
                   placeholder="Horario (ej: 14:00 - 18:00)"
                   v-model="newProgram.time"
-                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 />
                 <input
                   type="url"
                   placeholder="URL de imagen"
                   v-model="newProgram.image"
-                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                  class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 />
               </div>
               
               <textarea
                 placeholder="Descripción del programa"
                 v-model="newProgram.description"
-                class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm mb-4"
+                class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm mb-4 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 rows="3"
               />
+
+              <!-- Days Selection -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-silver-400 mb-2">Días de transmisión</label>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="day in availableDays"
+                    :key="day"
+                    class="flex items-center space-x-2 bg-dark-600 border border-gold-400/20 rounded px-3 py-2 cursor-pointer hover:border-gold-400/40 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      :value="day"
+                      v-model="newProgram.days"
+                      class="text-gold-400 focus:ring-gold-400"
+                    />
+                    <span class="text-white text-sm">{{ day }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Featured Toggle -->
+              <div class="mb-4">
+                <label class="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="newProgram.featured"
+                    class="text-gold-400 focus:ring-gold-400"
+                  />
+                  <span class="text-white text-sm">Programa destacado</span>
+                </label>
+              </div>
               
               <button
                 @click="handleAddProgram"
-                class="bg-gradient-gold text-dark-900 px-4 py-2 rounded font-medium hover:scale-105 transition-transform"
+                :disabled="!newProgram.title || !newProgram.host"
+                class="bg-gradient-gold text-dark-900 px-4 py-2 rounded font-medium hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                Agregar Programa
+                <Plus class="w-4 h-4" />
+                <span>Agregar Programa</span>
               </button>
             </div>
 
             <!-- Programs List -->
             <div class="space-y-4">
-              <h4 class="text-lg font-semibold text-white">Programas Existentes</h4>
-              <div v-for="program in programs" :key="program.id" class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-lg font-semibold text-white">Programas Existentes</h4>
+                <div class="text-sm text-silver-400">
+                  {{ programs.length }} programa{{ programs.length !== 1 ? 's' : '' }}
+                </div>
+              </div>
+
+              <div v-if="programsLoading" class="text-center py-8">
+                <div class="inline-flex items-center space-x-2 text-gold-400">
+                  <div class="w-4 h-4 bg-gold-400 rounded-full animate-pulse"></div>
+                  <span>Cargando programas...</span>
+                </div>
+              </div>
+
+              <div v-else-if="programs.length === 0" class="text-center py-8">
+                <div class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-6">
+                  <Calendar class="w-12 h-12 text-gold-400 mx-auto mb-3 opacity-50" />
+                  <p class="text-silver-400">No hay programas registrados</p>
+                </div>
+              </div>
+
+              <div v-else v-for="program in programs" :key="program.id" class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-4">
                 <div v-if="editingProgram?.id === program.id" class="space-y-3">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <input
                       type="text"
                       v-model="editingProgram.title"
-                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                     />
                     <input
                       type="text"
                       v-model="editingProgram.host"
-                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    />
+                    <input
+                      type="text"
+                      v-model="editingProgram.time"
+                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    />
+                    <input
+                      type="url"
+                      v-model="editingProgram.image"
+                      class="px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                     />
                   </div>
                   <textarea
                     v-model="editingProgram.description"
-                    class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                    class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                     rows="2"
                   />
                   <div class="flex space-x-2">
@@ -198,12 +279,29 @@
                   </div>
                 </div>
                 <div v-else class="flex items-center justify-between">
-                  <div>
-                    <h5 class="font-semibold text-white">{{ program.title }}</h5>
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-2 mb-1">
+                      <h5 class="font-semibold text-white">{{ program.title }}</h5>
+                      <div v-if="program.featured" class="bg-gold-400 text-dark-900 px-2 py-0.5 rounded text-xs font-medium">
+                        Destacado
+                      </div>
+                      <div v-if="isRecentlyUpdated(program)" class="bg-green-500 text-white px-2 py-0.5 rounded text-xs font-medium">
+                        Actualizado
+                      </div>
+                    </div>
                     <p class="text-silver-400 text-sm">{{ program.host }} - {{ program.time }}</p>
                     <p class="text-silver-300 text-sm mt-1">{{ program.description }}</p>
+                    <div v-if="program.days && program.days.length > 0" class="flex flex-wrap gap-1 mt-2">
+                      <span
+                        v-for="day in program.days"
+                        :key="day"
+                        class="bg-gold-400/20 text-gold-400 px-2 py-0.5 rounded text-xs"
+                      >
+                        {{ day }}
+                      </span>
+                    </div>
                   </div>
-                  <div class="flex space-x-2">
+                  <div class="flex space-x-2 ml-4">
                     <button
                       @click="editingProgram = { ...program }"
                       class="bg-blue-600 text-white p-2 rounded hover:scale-105 transition-transform"
@@ -228,6 +326,15 @@
               <Settings class="w-5 h-5 mr-2" />
               Configuración General
             </h4>
+
+            <!-- Real-time Status for Settings -->
+            <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 mb-6 flex items-center space-x-3">
+              <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <div>
+                <p class="text-green-400 font-medium">Configuración Sincronizada</p>
+                <p class="text-green-300 text-sm">Los cambios se aplican automáticamente en todo el sitio</p>
+              </div>
+            </div>
             
             <div class="space-y-6">
               <!-- Stream URL -->
@@ -302,11 +409,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useFirestore } from '../composables/useFirestore'
 import { useSettings } from '../composables/useSettings'
-import { X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings } from 'lucide-vue-next'
+import { X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings, Calendar } from 'lucide-vue-next'
 
 interface Props {
   isOpen: boolean
@@ -319,7 +426,7 @@ defineEmits<{
 }>()
 
 const { user, login, logout } = useAuth()
-const { data: programs, updateDocument, addDocument, deleteDocument } = useFirestore('programs')
+const { data: programs, loading: programsLoading, addDocument, updateDocument, deleteDocument } = useFirestore('programs')
 const { settings, updateSettings } = useSettings()
 
 const loginData = reactive({ email: '', password: '' })
@@ -330,13 +437,15 @@ const newProgram = reactive({
   host: '',
   time: '',
   description: '',
-  days: [],
+  days: [] as string[],
   image: '',
   featured: false
 })
 const activeTab = ref('programs')
 const settingsLoading = ref(false)
 const settingsSaved = ref(false)
+
+const availableDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 
 // Settings form
 const settingsForm = reactive({
@@ -351,9 +460,20 @@ watch(settings, (newSettings) => {
 }, { immediate: true })
 
 const tabs = [
-  { id: 'programs', label: 'Programas' },
-  { id: 'settings', label: 'Configuración' }
+  { id: 'programs', label: 'Programas', icon: Calendar },
+  { id: 'settings', label: 'Configuración', icon: Settings }
 ]
+
+// Check if a program was recently updated (within last 5 minutes)
+const isRecentlyUpdated = (program: any) => {
+  if (!program.updatedAt) return false
+  
+  const updatedAt = program.updatedAt.toDate ? program.updatedAt.toDate() : new Date(program.updatedAt)
+  const now = new Date()
+  const diffInMinutes = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
+  
+  return diffInMinutes < 5
+}
 
 const handleLogin = async (e: Event) => {
   e.preventDefault()
@@ -366,29 +486,41 @@ const handleLogin = async (e: Event) => {
 
 const handleSaveProgram = async () => {
   if (editingProgram.value) {
-    await updateDocument(editingProgram.value.id, editingProgram.value)
-    editingProgram.value = null
+    try {
+      await updateDocument(editingProgram.value.id, editingProgram.value)
+      editingProgram.value = null
+    } catch (error) {
+      alert('Error al actualizar el programa')
+    }
   }
 }
 
 const handleAddProgram = async () => {
   if (newProgram.title && newProgram.host) {
-    await addDocument(newProgram)
-    Object.assign(newProgram, {
-      title: '',
-      host: '',
-      time: '',
-      description: '',
-      days: [],
-      image: '',
-      featured: false
-    })
+    try {
+      await addDocument(newProgram)
+      Object.assign(newProgram, {
+        title: '',
+        host: '',
+        time: '',
+        description: '',
+        days: [],
+        image: '',
+        featured: false
+      })
+    } catch (error) {
+      alert('Error al agregar el programa')
+    }
   }
 }
 
 const handleDeleteProgram = async (id: string) => {
   if (confirm('¿Estás seguro de que quieres eliminar este programa?')) {
-    await deleteDocument(id)
+    try {
+      await deleteDocument(id)
+    } catch (error) {
+      alert('Error al eliminar el programa')
+    }
   }
 }
 

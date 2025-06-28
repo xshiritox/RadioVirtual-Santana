@@ -1,53 +1,137 @@
-import { ref, onMounted } from 'vue'
-import { collection, getDocs, updateDoc, addDoc, deleteDoc, doc } from 'firebase/firestore'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { 
+  collection, 
+  getDocs, 
+  updateDoc, 
+  addDoc, 
+  deleteDoc, 
+  doc, 
+  onSnapshot,
+  query,
+  orderBy 
+} from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
 export const useFirestore = (collectionName: string) => {
   const data = ref<any[]>([])
   const loading = ref(true)
+  const error = ref<string | null>(null)
+  let unsubscribe: (() => void) | null = null
 
-  const fetchData = async () => {
+  const setupRealtimeListener = () => {
     try {
+      // Create query with ordering for consistent results
+      const q = query(
+        collection(db, collectionName),
+        orderBy('createdAt', 'desc')
+      )
+
+      // Set up real-time listener
+      unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const docs = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+          data.value = docs
+          loading.value = false
+          error.value = null
+          console.log(`Real-time update received for ${collectionName}:`, docs.length, 'documents')
+        },
+        (err) => {
+          console.error(`Error in real-time listener for ${collectionName}:`, err)
+          error.value = err.message
+          loading.value = false
+          // Fallback to one-time fetch
+          fetchDataOnce()
+        }
+      )
+    } catch (err) {
+      console.error(`Error setting up real-time listener for ${collectionName}:`, err)
+      // Fallback to one-time fetch
+      fetchDataOnce()
+    }
+  }
+
+  const fetchDataOnce = async () => {
+    try {
+      loading.value = true
       const querySnapshot = await getDocs(collection(db, collectionName))
-      const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      const docs = querySnapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      }))
       data.value = docs
-    } catch (error) {
-      console.error('Error fetching data:', error)
+      error.value = null
+    } catch (err) {
+      console.error(`Error fetching data for ${collectionName}:`, err)
+      error.value = err instanceof Error ? err.message : 'Error desconocido'
     } finally {
       loading.value = false
     }
   }
 
   onMounted(() => {
-    fetchData()
+    setupRealtimeListener()
+  })
+
+  onUnmounted(() => {
+    if (unsubscribe) {
+      unsubscribe()
+      console.log(`Real-time listener unsubscribed for ${collectionName}`)
+    }
   })
 
   const addDocument = async (docData: any) => {
     try {
-      await addDoc(collection(db, collectionName), docData)
-      fetchData()
-    } catch (error) {
-      console.error('Error adding document:', error)
+      const dataWithTimestamp = {
+        ...docData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      
+      const docRef = await addDoc(collection(db, collectionName), dataWithTimestamp)
+      console.log(`Document added to ${collectionName} with ID:`, docRef.id)
+      return docRef.id
+    } catch (err) {
+      console.error(`Error adding document to ${collectionName}:`, err)
+      throw err
     }
   }
 
   const updateDocument = async (id: string, docData: any) => {
     try {
-      await updateDoc(doc(db, collectionName, id), docData)
-      fetchData()
-    } catch (error) {
-      console.error('Error updating document:', error)
+      const dataWithTimestamp = {
+        ...docData,
+        updatedAt: new Date()
+      }
+      
+      await updateDoc(doc(db, collectionName, id), dataWithTimestamp)
+      console.log(`Document updated in ${collectionName} with ID:`, id)
+    } catch (err) {
+      console.error(`Error updating document in ${collectionName}:`, err)
+      throw err
     }
   }
 
   const deleteDocument = async (id: string) => {
     try {
       await deleteDoc(doc(db, collectionName, id))
-      fetchData()
-    } catch (error) {
-      console.error('Error deleting document:', error)
+      console.log(`Document deleted from ${collectionName} with ID:`, id)
+    } catch (err) {
+      console.error(`Error deleting document from ${collectionName}:`, err)
+      throw err
     }
   }
 
-  return { data, loading, addDocument, updateDocument, deleteDocument, refetch: fetchData }
+  return { 
+    data, 
+    loading, 
+    error,
+    addDocument, 
+    updateDocument, 
+    deleteDocument, 
+    refetch: fetchDataOnce 
+  }
 }

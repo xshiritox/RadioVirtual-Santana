@@ -1,7 +1,7 @@
 <template>
   <div class="fixed bottom-6 right-6 z-50">
     <div class="bg-dark-800/95 backdrop-blur-md border border-gold-400/30 rounded-2xl p-6 shadow-2xl min-w-[320px] animate-float">
-      <audio ref="audioRef" :src="streamUrl" />
+      <audio ref="audioRef" :src="currentStreamUrl" />
       
       <!-- Header -->
       <div class="flex items-center justify-between mb-4">
@@ -73,13 +73,22 @@
           }"
         />
       </div>
+
+      <!-- Real-time Settings Status -->
+      <div v-if="settingsLoading" class="mt-3 flex items-center space-x-2 text-gold-400 text-xs">
+        <div class="w-2 h-2 bg-gold-400 rounded-full animate-pulse"></div>
+        <span>Actualizando configuración...</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { Play, Pause, Volume2, VolumeX, Radio, Disc } from 'lucide-vue-next'
+import { useSettings } from '../composables/useSettings'
+
+const { settings, loading: settingsLoading } = useSettings()
 
 const isPlaying = ref(false)
 const volume = ref(0.7)
@@ -87,8 +96,25 @@ const isMuted = ref(false)
 const isLive = ref(true)
 const audioRef = ref<HTMLAudioElement>()
 
-// URL de stream de radio de ejemplo (reemplazar con la URL real)
-const streamUrl = "https://stream.zeno.fm/your-stream-url" // Reemplazar con URL real
+// Use stream URL from settings with fallback
+const currentStreamUrl = computed(() => 
+  settings.value.streamUrl || "https://stream.zeno.fm/your-stream-url"
+)
+
+// Watch for stream URL changes and update audio source
+watch(currentStreamUrl, (newUrl) => {
+  if (audioRef.value && newUrl) {
+    const wasPlaying = isPlaying.value
+    if (wasPlaying) {
+      audioRef.value.pause()
+    }
+    audioRef.value.src = newUrl
+    if (wasPlaying) {
+      audioRef.value.play().catch(console.error)
+    }
+    console.log('Stream URL updated:', newUrl)
+  }
+})
 
 const togglePlay = () => {
   if (audioRef.value) {
