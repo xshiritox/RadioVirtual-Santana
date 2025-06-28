@@ -5,42 +5,47 @@ const Advertising: React.FC = () => {
   const adPackages = [
     {
       name: 'Básico',
-      price: '$299',
-      period: '/mes',
+      price: '$350.000',
+      period: 'COP',
       features: [
-        '10 spots por día',
-        'Duración: 30 segundos',
-        'Horarios rotativos',
-        'Reporte mensual básico'
+        'Spots Comercial',
       ],
       highlighted: false
     },
     {
-      name: 'Profesional',
-      price: '$599',
-      period: '/mes',
+      name: 'Estándar',
+      price: '$750.000',
+      period: 'COP',
       features: [
-        '20 spots por día',
-        'Duración: 30-60 segundos',
-        'Horarios premium',
-        'Reportes detallados',
-        'Mención en redes sociales'
+        'Spots Comercial',
+        'Vídeo Publicitario'
       ],
       highlighted: true
     },
     {
       name: 'Premium',
-      price: '$999',
-      period: '/mes',
+      price: '$1.500.000',
+      period: 'COP',
       features: [
-        'Spots ilimitados',
-        'Duración personalizada',
-        'Horarios exclusivos',
-        'Analytics avanzados',
-        'Campaña integral en redes',
-        'Patrocinio de programas'
+        'Spots Comercial',
+        'Vídeo Publicitario',
+        'Pauta Radial',
+        'Flyer (Colombia)',
       ],
       highlighted: false
+    },
+    {
+      name: 'VIP',
+      price: '$3.000.000',
+      period: 'COP',
+      features: [
+        'Spots Comercial',
+        'Vídeo Publicitario HD',
+        'Pauta Radial Premium',
+        'Flyer (Colombia)',
+        'Menciones Redes Sociales',
+      ],
+      highlighted: true
     }
   ];
 
@@ -102,11 +107,11 @@ const Advertising: React.FC = () => {
         </div>
 
         {/* Pricing Packages */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
           {adPackages.map((pkg, index) => (
             <div
               key={index}
-              className={`relative bg-dark-700/50 backdrop-blur-sm border rounded-2xl p-8 text-center transition-all duration-300 hover:scale-105 ${
+              className={`relative flex flex-col h-full bg-dark-700/50 backdrop-blur-sm border rounded-2xl p-8 text-center transition-all duration-300 hover:scale-105 ${
                 pkg.highlighted 
                   ? 'border-gold-400 ring-2 ring-gold-400/30' 
                   : 'border-gold-400/20 hover:border-gold-400/40'
@@ -127,22 +132,24 @@ const Advertising: React.FC = () => {
 
               <ul className="space-y-3 mb-8">
                 {pkg.features.map((feature, fIndex) => (
-                  <li key={fIndex} className="text-silver-300 flex items-center justify-center">
-                    <div className="w-2 h-2 bg-gold-400 rounded-full mr-3"></div>
-                    {feature}
+                  <li key={fIndex} className="text-silver-300 flex items-start">
+                    <div className="flex-shrink-0 mt-1.5 mr-2 w-2 h-2 bg-gold-400 rounded-full"></div>
+                    <span className="leading-snug">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <button 
-                className={`w-full py-3 rounded-full font-semibold transition-all duration-300 ${
-                  pkg.highlighted
-                    ? 'bg-gradient-gold text-dark-900 hover:scale-105'
-                    : 'border-2 border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-dark-900'
-                }`}
-              >
-                Contratar Ahora
-              </button>
+              <div className="mt-auto pt-6">
+                <button 
+                  className={`w-full py-3 rounded-full font-semibold transition-all duration-300 ${
+                    pkg.highlighted
+                      ? 'bg-gradient-gold text-dark-900 hover:scale-105'
+                      : 'border-2 border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-dark-900'
+                  }`}
+                >
+                  Contratar Ahora
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -177,12 +184,9 @@ const Advertising: React.FC = () => {
             alcanzar tus objetivos de marketing.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <button className="bg-gradient-gold text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform">
               Solicitar Cotización
-            </button>
-            <button className="border-2 border-gold-400 text-gold-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold-400 hover:text-dark-900 transition-all duration-300">
-              Ver Portfolio
             </button>
           </div>
         </div>

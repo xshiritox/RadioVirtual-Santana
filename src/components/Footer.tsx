@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Heart, Facebook, Instagram, Twitter, Youtube, Mail, Phone } from 'lucide-react';
+import { Radio, Heart, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -12,16 +12,24 @@ const Footer: React.FC = () => {
     { label: 'Contacto', href: '#contact' }
   ];
 
-  const socialLinks = [
-    { icon: Facebook, name: 'Facebook', url: '#' },
-    { icon: Instagram, name: 'Instagram', url: '#' },
-    { icon: Twitter, name: 'Twitter', url: '#' },
-    { icon: Youtube, name: 'YouTube', url: '#' }
-  ];
-
   const contactInfo = [
-    { icon: Mail, text: 'info@radiosantana.com' },
-    { icon: Phone, text: '+1 (555) 123-4567' }
+    { 
+      icon: Phone, 
+      text: '+57 310 6035384',
+      href: 'tel:+573106035384',
+      isLink: true
+    },
+    { 
+      icon: Mail, 
+      text: 'radiosantana.nm@gmail.com',
+      href: 'mailto:radiosantana.nm@gmail.com',
+      isLink: true
+    },
+    { 
+      icon: MapPin, 
+      text: 'Colombia',
+      isLink: false
+    }
   ];
 
   return (
@@ -47,20 +55,6 @@ const Footer: React.FC = () => {
               Tu radio virtual que conecta corazones a través de la música. 
               Acompañándote las 24 horas del día con la mejor programación.
             </p>
-            
-            {/* Social Media */}
-            <div className="flex space-x-4">
-              {socialLinks.map((social, index) => (
-                <a
-                  key={index}
-                  href={social.url}
-                  className="w-10 h-10 bg-dark-800 border border-gold-400/20 rounded-full flex items-center justify-center text-silver-400 hover:text-gold-400 hover:border-gold-400/40 hover:scale-110 transition-all duration-300"
-                  title={social.name}
-                >
-                  <social.icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -88,13 +82,22 @@ const Footer: React.FC = () => {
               {contactInfo.map((contact, index) => (
                 <li key={index} className="flex items-center space-x-3">
                   <contact.icon className="w-4 h-4 text-gold-400 flex-shrink-0" />
-                  <span className="text-silver-400 text-sm">{contact.text}</span>
+                  {contact.isLink ? (
+                    <a 
+                      href={contact.href}
+                      className="text-silver-400 text-sm hover:text-gold-400 transition-colors"
+                    >
+                      {contact.text}
+                    </a>
+                  ) : (
+                    <span className="text-silver-400 text-sm">{contact.text}</span>
+                  )}
                 </li>
               ))}
             </ul>
             
             <div className="mt-6 p-4 bg-dark-800/50 backdrop-blur-sm border border-gold-400/20 rounded-lg">
-              <p className="text-silver-400 text-sm mb-2">🔴 EN VIVO</p>
+              <p className="text-silver-400 text-sm mb-2">🟢 EN VIVO</p>
               <p className="text-white font-medium text-sm">Transmitiendo 24/7</p>
             </div>
           </div>
