@@ -2,4 +2,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './index.css'
 
-createApp(App).mount('#app')
+// Crear y montar la aplicación Vue
+const app = createApp(App)
+app.mount('#app')
