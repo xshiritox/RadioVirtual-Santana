@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Headphones, Clock, Users } from 'lucide-react';
+import { Headphones, Clock, Users } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const stats = [
@@ -28,8 +28,12 @@ const Hero: React.FC = () => {
           <div className="mb-8 animate-float">
             <div className="w-32 h-32 mx-auto mb-6 relative">
               <div className="absolute inset-0 bg-gradient-gold rounded-full opacity-20 animate-pulse"></div>
-              <div className="absolute inset-2 bg-gradient-gold rounded-full flex items-center justify-center">
-                <Play className="w-12 h-12 text-dark-900 ml-1" />
+              <div className="absolute inset-2 bg-gradient-gold rounded-full flex items-center justify-center overflow-hidden animate-glow">
+                <img 
+                  src="/logo.WebP" 
+                  alt="Radio Santana" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
             
@@ -47,18 +51,17 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Description */}
-          <p className="text-lg md:text-xl text-silver-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Disfruta de la mejor música, programas en vivo y entretenimiento las 24 horas del día. 
-            Una experiencia sonora única que conecta con tu estilo de vida.
-          </p>
+          <div className="relative inline-block group mb-12">
+            <p className="text-xl md:text-2xl font-medium text-silver-300">
+              <span className="relative">
+                La forma <span className="text-gold-400 font-bold">+</span> fresca de escuchar radio.
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-gold-400/0 via-gold-400 to-gold-400/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
+              </span>
+            </p>
+          </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <button className="group bg-gradient-gold text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-all duration-300 flex items-center space-x-3 animate-glow">
-              <Play className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Escuchar Ahora</span>
-            </button>
-            
+          <div className="flex justify-center items-center mb-16">
             <button className="border-2 border-gold-400 text-gold-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold-400 hover:text-dark-900 transition-all duration-300 flex items-center space-x-3">
               <Headphones className="w-5 h-5" />
               <span>Programación</span>
@@ -80,12 +83,7 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-gold-400/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-gold-400 rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
+
       </div>
     </section>
   );
