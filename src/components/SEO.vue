@@ -87,4 +87,3 @@ onMounted(() => {
   document.head.appendChild(script)
 })
 </script>
-</template>
