@@ -20,7 +20,7 @@
             <div class="absolute inset-0 bg-gradient-gold rounded-full opacity-20 animate-pulse"></div>
             <div class="absolute inset-2 bg-gradient-gold rounded-full flex items-center justify-center overflow-hidden animate-glow">
               <img 
-                src="/logo.WebP" 
+                :src="'/logo.WebP?url'" 
                 alt="Radio Santana" 
                 class="w-full h-full object-cover"
               />
