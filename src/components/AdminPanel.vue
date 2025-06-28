@@ -236,16 +236,6 @@
                   class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
                 />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-silver-400 mb-2">
-                  Título del Sitio
-                </label>
-                <input
-                  type="text"
-                  placeholder="Radio Santana - Tu Radio Virtual"
-                  class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
-                />
-              </div>
               <button class="bg-gradient-gold text-dark-900 px-4 py-2 rounded font-medium hover:scale-105 transition-transform">
                 Guardar Configuración
               </button>
