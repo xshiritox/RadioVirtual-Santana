@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Send, Clock, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, Facebook, Instagram, MessageCircle } from 'lucide-react';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,33 +28,48 @@ const Contact: React.FC = () => {
     {
       icon: Phone,
       title: 'Teléfono',
-      details: ['+1 (555) 123-4567', '+1 (555) 123-4568'],
-      action: 'tel:+15551234567'
+      details: ['+57 310 6035384'],
+      action: 'tel:+573106035384'
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@radiosantana.com', 'comercial@radiosantana.com'],
-      action: 'mailto:info@radiosantana.com'
+      details: ['radiosantana.nm@gmail.com'],
+      action: 'mailto:radiosantana.nm@gmail.com'
     },
     {
       icon: MapPin,
       title: 'Ubicación',
-      details: ['Calle Principal 123', 'Ciudad, País CP 12345'],
+      details: ['Colombia'],
       action: '#'
     },
-    {
-      icon: Clock,
-      title: 'Horarios',
-      details: ['Lunes - Viernes: 9:00 - 18:00', 'Fin de semana: 10:00 - 16:00'],
-      action: '#'
-    }
   ];
 
   const socialLinks = [
-    { icon: Facebook, name: 'Facebook', url: '#', color: 'hover:text-blue-400' },
-    { icon: Instagram, name: 'Instagram', url: '#', color: 'hover:text-pink-400' },
-    { icon: Twitter, name: 'Twitter', url: '#', color: 'hover:text-blue-300' }
+    { 
+      icon: Facebook, 
+      name: 'Facebook', 
+      url: 'https://www.facebook.com/profile.php?id=61577153733772', 
+      color: 'hover:text-blue-400',
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    },
+    { 
+      icon: Instagram, 
+      name: 'Instagram', 
+      url: '#', 
+      color: 'hover:text-pink-400',
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    },
+    { 
+      icon: MessageCircle, 
+      name: 'WhatsApp', 
+      url: 'https://wa.me/573106035384', 
+      color: 'hover:text-green-400',
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    }
   ];
 
   return (
@@ -129,6 +144,8 @@ const Contact: React.FC = () => {
                   <a
                     key={index}
                     href={social.url}
+                    target={social.target || '_self'}
+                    rel={social.rel || ''}
                     className={`w-10 h-10 bg-dark-700 rounded-full flex items-center justify-center text-silver-400 ${social.color} transition-all duration-300 hover:scale-110`}
                     title={social.name}
                   >
