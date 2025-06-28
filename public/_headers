@@ -1,0 +1,23 @@
+# Netlify headers file to ensure correct MIME types
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:;
+
+# JavaScript modules
+/*.js
+  Content-Type: application/javascript; charset=utf-8
+
+# ES modules
+/*.mjs
+  Content-Type: application/javascript; charset=utf-8
+
+# TypeScript files (if any)
+/*.ts
+  Content-Type: application/javascript; charset=utf-8
+
+# CSS files
+/*.css
+  Content-Type: text/css; charset=utf-8
+
+# HTML files
+/*.html
+  Content-Type: text/html; charset=utf-8
