@@ -224,21 +224,75 @@
 
           <!-- Settings Tab -->
           <div v-if="activeTab === 'settings'" class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-6">
-            <h4 class="text-lg font-semibold text-white mb-4">Configuración General</h4>
-            <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-white mb-6 flex items-center">
+              <Settings class="w-5 h-5 mr-2" />
+              Configuración General
+            </h4>
+            
+            <div class="space-y-6">
+              <!-- Stream URL -->
               <div>
                 <label class="block text-sm font-medium text-silver-400 mb-2">
                   URL del Stream de Radio
                 </label>
                 <input
                   type="url"
+                  v-model="settingsForm.streamUrl"
                   placeholder="https://stream.zeno.fm/your-stream"
-                  class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm"
+                  class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                 />
+                <p class="text-silver-500 text-xs mt-1">URL del stream de audio de la radio</p>
               </div>
-              <button class="bg-gradient-gold text-dark-900 px-4 py-2 rounded font-medium hover:scale-105 transition-transform">
-                Guardar Configuración
-              </button>
+
+              <!-- YouTube Video ID -->
+              <div>
+                <label class="block text-sm font-medium text-silver-400 mb-2">
+                  ID del Video Promocional de YouTube
+                </label>
+                <div class="space-y-2">
+                  <input
+                    type="text"
+                    v-model="settingsForm.youtubeVideoId"
+                    placeholder="dQw4w9WgXcQ"
+                    class="w-full px-3 py-2 bg-dark-600 border border-gold-400/20 rounded text-white text-sm focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                  />
+                  <p class="text-silver-500 text-xs">
+                    Ingresa solo el ID del video. Por ejemplo, si tu video está en 
+                    <code class="bg-dark-600 px-1 rounded text-gold-400">https://www.youtube.com/watch?v=ABC123XYZ</code>, 
+                    usa solo <code class="bg-dark-600 px-1 rounded text-gold-400">ABC123XYZ</code>
+                  </p>
+                  
+                  <!-- Video Preview -->
+                  <div v-if="settingsForm.youtubeVideoId" class="mt-4">
+                    <p class="text-sm text-silver-400 mb-2">Vista previa:</p>
+                    <div class="aspect-video max-w-md rounded-lg overflow-hidden bg-dark-600">
+                      <img
+                        :src="`https://img.youtube.com/vi/${settingsForm.youtubeVideoId}/maxresdefault.jpg`"
+                        :alt="'Preview del video ' + settingsForm.youtubeVideoId"
+                        class="w-full h-full object-cover"
+                        @error="onImageError"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save Button -->
+              <div class="flex items-center space-x-4 pt-4 border-t border-gold-400/20">
+                <button 
+                  @click="handleSaveSettings"
+                  :disabled="settingsLoading"
+                  class="bg-gradient-gold text-dark-900 px-6 py-2 rounded-lg font-medium hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  <Save class="w-4 h-4" />
+                  <span>{{ settingsLoading ? 'Guardando...' : 'Guardar Configuración' }}</span>
+                </button>
+                
+                <div v-if="settingsSaved" class="flex items-center space-x-2 text-green-400">
+                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span class="text-sm">Configuración guardada</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -248,10 +302,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useFirestore } from '../composables/useFirestore'
-import { X, Edit3, Save, Plus, Trash2, Eye, EyeOff } from 'lucide-vue-next'
+import { useSettings } from '../composables/useSettings'
+import { X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings } from 'lucide-vue-next'
 
 interface Props {
   isOpen: boolean
@@ -265,6 +320,7 @@ defineEmits<{
 
 const { user, login, logout } = useAuth()
 const { data: programs, updateDocument, addDocument, deleteDocument } = useFirestore('programs')
+const { settings, updateSettings } = useSettings()
 
 const loginData = reactive({ email: '', password: '' })
 const showPassword = ref(false)
@@ -279,6 +335,20 @@ const newProgram = reactive({
   featured: false
 })
 const activeTab = ref('programs')
+const settingsLoading = ref(false)
+const settingsSaved = ref(false)
+
+// Settings form
+const settingsForm = reactive({
+  streamUrl: '',
+  youtubeVideoId: ''
+})
+
+// Watch settings changes and update form
+watch(settings, (newSettings) => {
+  settingsForm.streamUrl = newSettings.streamUrl
+  settingsForm.youtubeVideoId = newSettings.youtubeVideoId
+}, { immediate: true })
 
 const tabs = [
   { id: 'programs', label: 'Programas' },
@@ -320,5 +390,36 @@ const handleDeleteProgram = async (id: string) => {
   if (confirm('¿Estás seguro de que quieres eliminar este programa?')) {
     await deleteDocument(id)
   }
+}
+
+const handleSaveSettings = async () => {
+  settingsLoading.value = true
+  settingsSaved.value = false
+  
+  try {
+    const success = await updateSettings({
+      streamUrl: settingsForm.streamUrl,
+      youtubeVideoId: settingsForm.youtubeVideoId
+    })
+    
+    if (success) {
+      settingsSaved.value = true
+      setTimeout(() => {
+        settingsSaved.value = false
+      }, 3000)
+    } else {
+      alert('Error al guardar la configuración')
+    }
+  } catch (error) {
+    console.error('Error saving settings:', error)
+    alert('Error al guardar la configuración')
+  } finally {
+    settingsLoading.value = false
+  }
+}
+
+const onImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSIjMjEyNTI5Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iOTAiIGZpbGw9IiM2Qzc1N0QiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VmlkZW8gbm8gZW5jb250cmFkbzwvdGV4dD4KPC9zdmc+'
 }
 </script>

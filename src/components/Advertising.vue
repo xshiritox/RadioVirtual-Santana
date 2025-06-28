@@ -89,7 +89,7 @@
         
         <div class="max-w-4xl mx-auto">
           <YouTubePlayer
-            :video-id="promoVideoId"
+            :video-id="currentVideoId"
             title="Radio Santana - Video Promocional"
             description="Descubre el poder de la publicidad en Radio Santana y cómo podemos ayudar a hacer crecer tu negocio"
             :autoplay="true"
@@ -118,11 +118,17 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Megaphone, TrendingUp, Target, BarChart3 } from 'lucide-vue-next'
 import YouTubePlayer from './YouTubePlayer.vue'
+import { useSettings } from '../composables/useSettings'
 
-// ID del video de YouTube (puedes cambiarlo por el ID de tu video promocional)
-const promoVideoId = 'dQw4w9WgXcQ' // Video de ejemplo - cambiar por tu video real
+const { settings } = useSettings()
+
+// Use the video ID from settings, fallback to default
+const currentVideoId = computed(() => 
+  settings.value.youtubeVideoId || 'dQw4w9WgXcQ'
+)
 
 const adPackages = [
   {
