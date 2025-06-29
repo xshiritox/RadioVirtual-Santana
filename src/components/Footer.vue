@@ -18,11 +18,10 @@
             </h3>
           </div>
           <p class="text-silver-400 mb-6 leading-relaxed">
-            RadioVirtual Santana es una emisora en línea dedicada a conectar
-            emociones a través de una programación musical de alta calidad,
-            disponible las 24 horas. Nuestro compromiso es brindar compañía,
-            inspiración y entretenimiento a una audiencia global,
-            con un estilo cercano, moderno y profesional.
+            ¡Bienvenidos a RadioVirtual Santana!
+            Tu espacio favorito donde los mejores éxitos y las 
+            noticias de actualidad se unen para acompañarte todo 
+            el día. ¡Súmate y disfruta la mejor vibra con nosotros!
           </p>
         </div>
 
