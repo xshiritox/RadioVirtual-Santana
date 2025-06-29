@@ -11,6 +11,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       },
     },
     assetsDir: 'assets',
@@ -29,11 +32,14 @@ export default defineConfig({
     host: true,
     strictPort: true,
     headers: {
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; media-src 'self' https: data:; frame-src 'self';"
+      'Content-Type': 'application/javascript; charset=utf-8'
     }
   },
   preview: {
     port: 4173,
     host: true,
+    headers: {
+      'Content-Type': 'application/javascript; charset=utf-8'
+    }
   },
 })
