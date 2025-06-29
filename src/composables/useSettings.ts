@@ -4,13 +4,11 @@ import { db } from '../lib/firebase'
 
 interface Settings {
   streamUrl: string
-  youtubeVideoId: string
   siteTitle: string
 }
 
 const defaultSettings: Settings = {
   streamUrl: 'https://radiovirtualsantana.listen2myshow.com',
-  youtubeVideoId: 'dQw4w9WgXcQ',
   siteTitle: 'Radio Santana - Tu Radio Virtual'
 }
 

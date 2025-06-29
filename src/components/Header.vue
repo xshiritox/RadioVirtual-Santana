@@ -103,7 +103,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Radio, Menu, X, Users, Calendar, Phone, Settings } from 'lucide-vue-next'
+import { Radio, Menu, X, Users, Calendar, Phone, Settings, Newspaper } from 'lucide-vue-next'
 import { useAuth } from '../composables/useAuth'
 
 const emit = defineEmits<{
@@ -115,6 +115,7 @@ const isMenuOpen = ref(false)
 
 const navItems = [
   { label: 'Inicio', href: '#home', icon: Radio },
+  { label: 'Noticias', href: '#noticias', icon: Newspaper },
   { label: 'Programas', href: '#programs', icon: Calendar },
   { label: 'Nosotros', href: '#about', icon: Users },
   { label: 'Contacto', href: '#contact', icon: Phone },

@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Reglas para la colección 'news'
+    match /news/{document} {
+      allow read: if true; // Cualquiera puede leer
+      allow write: if request.auth != null; // Solo usuarios autenticados pueden escribir
+    }
+    
+    // Reglas para la colección 'newsletter'
+    match /newsletter/{document} {
+      allow read, write: if true;
+    }
+    
+    // Reglas para la colección 'programs' (solo admins pueden escribir)
+    match /programs/{document} {
+      allow read: if true; // Cualquiera puede leer
+      allow write: if request.auth != null; // Solo usuarios autenticados pueden escribir
+    }
+    
+    // Reglas para la colección 'settings' (solo admins)
+    match /settings/{document} {
+      allow read: if true; // Cualquiera puede leer
+      allow write: if request.auth != null; // Solo usuarios autenticados pueden escribir
+    }
+    
+    // Regla por defecto: denegar todo lo que no coincida con las reglas anteriores
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

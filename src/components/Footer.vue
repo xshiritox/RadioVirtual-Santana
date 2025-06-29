@@ -175,6 +175,7 @@ const handleNewsletterSubmit = async (e: Event) => {
 
 const quickLinks = [
   { label: 'Inicio', href: '#home' },
+  { label: 'Noticias', href: '#noticias' },
   { label: 'Programas', href: '#programs' },
   { label: 'Nosotros', href: '#about' },
   { label: 'Publicidad', href: '#advertising' },

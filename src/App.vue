@@ -6,6 +6,7 @@
       <Hero />
       <Programs />
       <About />
+      <NewsAndAds />
       <Advertising />
       <Contact />
     </main>
@@ -25,6 +26,7 @@ import Header from './components/Header.vue'
 import Hero from './components/Hero.vue'
 import Programs from './components/Programs.vue'
 import About from './components/About.vue'
+import NewsAndAds from './components/NewsAndAds.vue'
 import Advertising from './components/Advertising.vue'
 import Contact from './components/Contact.vue'
 import Footer from './components/Footer.vue'

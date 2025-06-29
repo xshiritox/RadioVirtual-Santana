@@ -41,7 +41,7 @@
                   v-model="loginForm.email"
                   :disabled="loginLoading"
                   class="w-full px-4 py-3 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300 disabled:opacity-50"
-                  placeholder="admin@radiosantana.com"
+                  placeholder="Usuario/Correo"
                   required
                 />
               </div>
@@ -92,10 +92,9 @@
             <!-- Demo Credentials -->
             <div class="mt-6 p-4 bg-dark-800/50 border border-gold-400/20 rounded-lg">
               <p class="text-silver-400 text-sm mb-2">
-                <strong class="text-gold-400">Credenciales de prueba:</strong>
+                <strong class="text-gold-400">Solo para administradores !</strong>
               </p>
-              <p class="text-silver-300 text-xs">Email: admin@radiosantana.com</p>
-              <p class="text-silver-300 text-xs">Contraseña: admin123</p>
+             
             </div>
           </div>
         </div>
@@ -141,8 +140,78 @@
 
           <!-- Tab Content -->
           <div class="min-h-[400px]">
+            <!-- News Tab -->
+            <div v-if="activeTab === 'news'" class="space-y-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-white">Gestión de Noticias</h3>
+                <button
+                  @click="openNewsForm()"
+                  class="bg-gradient-gold text-dark-900 px-4 py-2 rounded-lg font-medium hover:scale-105 transition-transform flex items-center space-x-2"
+                >
+                  <Plus class="w-4 h-4" />
+                  <span>Nueva Noticia</span>
+                </button>
+              </div>
+
+              <!-- News List -->
+              <div class="space-y-4">
+                <div v-if="newsLoading" class="text-center py-8">
+                  <div class="inline-flex items-center space-x-2 text-gold-400">
+                    <div class="w-4 h-4 bg-gold-400 rounded-full animate-pulse"></div>
+                    <span>Cargando noticias...</span>
+                  </div>
+                </div>
+
+                <div v-else-if="news.length === 0" class="text-center py-8">
+                  <Newspaper class="w-16 h-16 text-silver-400 mx-auto mb-4 opacity-50" />
+                  <p class="text-silver-400">No hay noticias registradas</p>
+                </div>
+
+                <div v-else class="grid gap-4">
+                  <div
+                    v-for="item in news"
+                    :key="item.id"
+                    class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-4 hover:border-gold-400/40 transition-colors"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-2">
+                          <span 
+                            class="text-xs px-2 py-1 rounded-full"
+                            :class="item.isFeatured ? 'bg-gold-900/30 text-gold-400' : 'bg-silver-900/30 text-silver-400'"
+                          >
+                            {{ item.isFeatured ? 'Destacado' : 'Común' }}
+                          </span>
+                          <span class="text-xs text-silver-500">{{ item.category }}</span>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white mb-1">{{ item.title }}</h4>
+                        <p class="text-silver-300 text-sm line-clamp-2 mb-2">{{ item.description }}</p>
+                        <p class="text-xs text-silver-500">{{ new Date(item.date).toLocaleDateString() }}</p>
+                      </div>
+                      <div class="flex items-center space-x-2 ml-4">
+                        <button
+                          @click="openNewsForm(item)"
+                          class="text-gold-400 hover:text-gold-300 transition-colors"
+                          title="Editar"
+                        >
+                          <Edit3 class="w-4 h-4" />
+                        </button>
+                        <button
+                          @click="handleDeleteNews(item.id!)"
+                          class="text-red-400 hover:text-red-300 transition-colors"
+                          title="Eliminar"
+                        >
+                          <Trash2 class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Programs Tab -->
-            <div v-if="activeTab === 'programs'" class="space-y-6">
+            <div v-else-if="activeTab === 'programs'" class="space-y-6">
               <div class="flex items-center justify-between">
                 <h3 class="text-xl font-bold text-white">Gestión de Programas</h3>
                 <button
@@ -205,30 +274,16 @@
               <h3 class="text-xl font-bold text-white">Configuración del Sistema</h3>
 
               <form @submit="handleSettingsUpdate" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-sm font-medium text-silver-300 mb-2">
-                      URL del Stream de Radio
-                    </label>
-                    <input
-                      type="url"
-                      v-model="settingsForm.streamUrl"
-                      class="w-full px-4 py-3 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                      placeholder="https://tu-stream-url.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-silver-300 mb-2">
-                      ID del Video de YouTube
-                    </label>
-                    <input
-                      type="text"
-                      v-model="settingsForm.youtubeVideoId"
-                      class="w-full px-4 py-3 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                      placeholder="dQw4w9WgXcQ"
-                    />
-                  </div>
+                <div>
+                  <label class="block text-sm font-medium text-silver-300 mb-2">
+                    URL del Stream de Radio
+                  </label>
+                  <input
+                    type="url"
+                    v-model="settingsForm.streamUrl"
+                    class="w-full px-4 py-3 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300 mb-6"
+                    placeholder="https://tu-stream-url.com"
+                  />
                 </div>
 
                 <button
@@ -326,6 +381,121 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Add/Edit News Modal -->
+        <div v-if="showNewsForm" class="fixed inset-0 z-50 bg-dark-900/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div class="bg-dark-800 border border-gold-400/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between p-6 border-b border-gold-400/20 sticky top-0 bg-dark-800 z-10">
+              <h3 class="text-xl font-bold text-gold-400">
+                {{ editingNews ? 'Editar Noticia' : 'Nueva Noticia' }}
+              </h3>
+              <button
+                @click="closeNewsForm"
+                class="text-silver-400 hover:text-gold-400 transition-colors"
+              >
+                <X class="w-6 h-6" />
+              </button>
+            </div>
+
+            <form @submit="handleNewsSubmit" class="p-6 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-silver-300 mb-2">Título</label>
+                  <input
+                    type="text"
+                    v-model="newsForm.title"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    required
+                  />
+                </div>
+                
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-silver-300 mb-2">Descripción corta</label>
+                  <input
+                    type="text"
+                    v-model="newsForm.description"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-silver-300 mb-2">Fecha</label>
+                  <input
+                    type="date"
+                    v-model="newsForm.date"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-silver-300 mb-2">Categoría</label>
+                  <select
+                    v-model="newsForm.category"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                  >
+                    <option value="general">General</option>
+                    <option value="eventos">Eventos</option>
+                    <option value="programas">Programas</option>
+                    <option value="anuncios">Anuncios</option>
+                  </select>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-silver-300 mb-2">URL de la imagen</label>
+                  <input
+                    type="url"
+                    v-model="newsForm.imageUrl"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    placeholder="https://ejemplo.com/imagen.jpg"
+                  />
+                  <div v-if="newsForm.imageUrl" class="mt-2">
+                    <img :src="newsForm.imageUrl" alt="Vista previa" class="h-32 w-full object-cover rounded-lg">
+                  </div>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-silver-300 mb-2">Contenido</label>
+                  <textarea
+                    v-model="newsForm.content"
+                    rows="5"
+                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                  <label class="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      v-model="newsForm.isFeatured"
+                      class="w-4 h-4 text-gold-400 bg-dark-700 border-gold-400/20 rounded focus:ring-gold-400/20"
+                    />
+                    <span class="text-silver-300 text-sm">Destacado</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex justify-end space-x-3 pt-6">
+                <button
+                  type="button"
+                  @click="closeNewsForm"
+                  class="px-4 py-2 text-silver-400 hover:text-white transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="bg-gradient-gold text-dark-900 px-6 py-2 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 disabled:opacity-50 flex items-center space-x-2"
+                >
+                  <Save class="w-4 h-4" />
+                  <span>{{ editingNews ? 'Actualizar' : 'Crear' }} Noticia</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
@@ -435,14 +605,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useFirestore } from '../composables/useFirestore'
 import { useSettings } from '../composables/useSettings'
 import { useNewsletter } from '../composables/useNewsletter'
+import { useNews } from '../composables/useNews'
 import { 
-  X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings, Calendar, 
-  Mail, Download, LogIn, LogOut, AlertCircle
+  X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings, 
+  Mail, Download, LogIn, LogOut, AlertCircle, Newspaper, Calendar
 } from 'lucide-vue-next'
 
 interface Props {
@@ -458,31 +629,28 @@ const { user, login, logout } = useAuth()
 const { data: programs, loading: programsLoading, addDocument: addProgram, updateDocument: updateProgram, deleteDocument: deleteProgramDoc } = useFirestore('programs')
 const { settings, updateSettings, loading: settingsLoading } = useSettings()
 const { subscribers, stats: newsletterStats, loading: newsletterLoading, updateSubscriber, exportSubscribers } = useNewsletter()
+const { 
+  news, 
+  loading: newsLoading, 
+  addNews, 
+  updateNews, 
+  deleteNews 
+} = useNews()
 
-// Login form
-const loginForm = reactive({
-  email: '',
-  password: ''
-})
-const loginLoading = ref(false)
-const loginError = ref('')
-const showPassword = ref(false)
-
-// Tabs
-const activeTab = ref('programs')
-const tabs = [
-  { id: 'programs', label: 'Programas', icon: Calendar },
-  { id: 'settings', label: 'Configuración', icon: Settings },
-  { id: 'newsletter', label: 'Newsletter', icon: Mail }
-]
-
-// Settings form
-const settingsForm = reactive({
-  streamUrl: '',
-  youtubeVideoId: ''
+const showNewsForm = ref(false)
+const editingNews = ref<any>(null)
+const newsForm = reactive({
+  title: '',
+  description: '',
+  content: '',
+  imageUrl: '',
+  date: new Date().toISOString().split('T')[0],
+  category: 'general',
+  isFeatured: false
 })
 
-// Program form
+const showAddProgram = ref(false)
+const editingProgram = ref<any>(null)
 const programForm = reactive({
   title: '',
   host: '',
@@ -491,17 +659,141 @@ const programForm = reactive({
   image: '',
   featured: false
 })
-const showAddProgram = ref(false)
-const editingProgram = ref<any>(null)
 const programSubmitting = ref(false)
 
-// Initialize settings form when settings load
-onMounted(() => {
-  if (settings.value) {
-    settingsForm.streamUrl = settings.value.streamUrl || ''
-    settingsForm.youtubeVideoId = settings.value.youtubeVideoId || ''
-  }
+const loginForm = reactive({
+  email: '',
+  password: ''
 })
+const loginLoading = ref(false)
+const loginError = ref('')
+const showPassword = ref(false)
+
+const activeTab = ref('programs')
+const tabs = [
+  { id: 'programs', label: 'Programas', icon: Calendar },
+  { id: 'news', label: 'Noticias', icon: Newspaper },
+  { id: 'newsletter', label: 'Newsletter', icon: Mail },
+  { id: 'settings', label: 'Configuración', icon: Settings }
+]
+
+const settingsForm = reactive({
+  streamUrl: '',
+  youtubeVideoId: ''
+})
+
+const openNewsForm = (newsItem: any = null) => {
+  if (newsItem) {
+    editingNews.value = newsItem
+    Object.assign(newsForm, {
+      title: newsItem.title,
+      description: newsItem.description,
+      content: newsItem.content,
+      imageUrl: newsItem.imageUrl,
+      date: newsItem.date.split('T')[0],
+      category: newsItem.category,
+      isFeatured: newsItem.isFeatured
+    })
+  } else {
+    editingNews.value = null
+    Object.assign(newsForm, {
+      title: '',
+      description: '',
+      content: '',
+      imageUrl: '',
+      date: new Date().toISOString().split('T')[0],
+      category: 'general',
+      isFeatured: false
+    })
+  }
+  showNewsForm.value = true
+}
+
+const closeNewsForm = () => {
+  showNewsForm.value = false
+  editingNews.value = null
+}
+
+const handleNewsSubmit = async (e: Event) => {
+  e.preventDefault()
+  try {
+    const newsData = {
+      title: newsForm.title,
+      description: newsForm.description,
+      content: newsForm.content,
+      imageUrl: newsForm.imageUrl,
+      date: newsForm.date,
+      category: newsForm.category,
+      isFeatured: newsForm.isFeatured
+    }
+
+    if (editingNews.value) {
+      await updateNews(editingNews.value.id!, newsData)
+    } else {
+      await addNews(newsData)
+    }
+    
+    closeNewsForm()
+  } catch (error) {
+    console.error('Error saving news:', error)
+  }
+}
+
+const handleDeleteNews = async (id: string) => {
+  if (confirm('¿Estás seguro de que deseas eliminar esta noticia?')) {
+    await deleteNews(id)
+  }
+}
+
+const handleProgramSubmit = async (e: Event) => {
+  e.preventDefault()
+  programSubmitting.value = true
+
+  try {
+    const programData = {
+      ...programForm,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    if (editingProgram.value) {
+      await updateProgram(editingProgram.value.id, programData)
+    } else {
+      await addProgram(programData)
+    }
+
+    // Reset form
+    closeAddProgram()
+  } catch (error) {
+    console.error('Error saving program:', error)
+  } finally {
+    programSubmitting.value = false
+  }
+}
+
+const editProgram = (program: any) => {
+  editingProgram.value = program
+  programForm.title = program.title
+  programForm.host = program.host
+  programForm.time = program.time
+  programForm.description = program.description
+  programForm.image = program.image || ''
+  programForm.featured = program.featured || false
+  showAddProgram.value = true
+}
+
+const closeAddProgram = () => {
+  showAddProgram.value = false
+  editingProgram.value = null
+  Object.assign(programForm, {
+    title: '',
+    host: '',
+    time: '',
+    description: '',
+    image: '',
+    featured: false
+  })
+}
 
 const handleLogin = async (e: Event) => {
   e.preventDefault()
@@ -544,60 +836,6 @@ const handleSettingsUpdate = async (e: Event) => {
   }
 }
 
-const editProgram = (program: any) => {
-  editingProgram.value = program
-  programForm.title = program.title
-  programForm.host = program.host
-  programForm.time = program.time
-  programForm.description = program.description
-  programForm.image = program.image || ''
-  programForm.featured = program.featured || false
-  showAddProgram.value = true
-}
-
-const closeAddProgram = () => {
-  showAddProgram.value = false
-  editingProgram.value = null
-  Object.assign(programForm, {
-    title: '',
-    host: '',
-    time: '',
-    description: '',
-    image: '',
-    featured: false
-  })
-}
-
-const handleProgramSubmit = async (e: Event) => {
-  e.preventDefault()
-  programSubmitting.value = true
-
-  try {
-    const programData = {
-      title: programForm.title,
-      host: programForm.host,
-      time: programForm.time,
-      description: programForm.description,
-      image: programForm.image || null,
-      featured: programForm.featured
-    }
-
-    if (editingProgram.value) {
-      await updateProgram(editingProgram.value.id, programData)
-    } else {
-      await addProgram(programData)
-    }
-
-    closeAddProgram()
-    alert(editingProgram.value ? 'Programa actualizado' : 'Programa creado')
-  } catch (error) {
-    console.error('Program submit error:', error)
-    alert('Error al guardar el programa')
-  } finally {
-    programSubmitting.value = false
-  }
-}
-
 const deleteProgram = async (id: string) => {
   if (confirm('¿Estás seguro de que quieres eliminar este programa?')) {
     try {
@@ -620,3 +858,7 @@ const toggleSubscriberStatus = async (subscriber: any) => {
   }
 }
 </script>
+
+<style scoped>
+/* Estilos específicos del componente */
+</style>
