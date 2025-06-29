@@ -49,6 +49,7 @@
     <!-- Additional Meta Tags -->
     <meta name="theme-color" content="#FFD700" />
     <meta name="msapplication-TileColor" content="#212529" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
 
     <!-- Canonical URL -->
     <link rel="canonical" :href="siteData.siteUrl" />
@@ -138,11 +139,7 @@ const structuredData = {
 onMounted(() => {
   try {
     // Remove existing structured data to avoid duplicates
-    document.querySelectorAll('script[type="application/ld+json"]').forEach(el => {
-      if (el.parentNode) {
-        el.parentNode.removeChild(el)
-      }
-    })
+    document.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove())
     
     // Create new structured data
     const script = document.createElement('script')
@@ -152,6 +149,24 @@ onMounted(() => {
     
     // Add to head with defer to not block rendering
     document.head.appendChild(script)
+    
+    // Preconnect to important origins
+    const preconnectUrls = [
+      'https://www.google-analytics.com',
+      'https://www.googletagmanager.com',
+      'https://www.facebook.com',
+      'https://connect.facebook.net',
+      'https://platform.twitter.com',
+      'https://www.instagram.com'
+    ]
+    
+    preconnectUrls.forEach(url => {
+      const link = document.createElement('link')
+      link.rel = 'preconnect'
+      link.href = url
+      link.crossOrigin = 'anonymous'
+      document.head.appendChild(link)
+    })
   } catch (error) {
     console.error('Error adding structured data:', error)
   }
