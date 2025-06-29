@@ -106,7 +106,7 @@ import { ref } from 'vue'
 import { Radio, Menu, X, Users, Calendar, Phone, Settings } from 'lucide-vue-next'
 import { useAuth } from '../composables/useAuth'
 
-defineEmits<{
+const emit = defineEmits<{
   'admin-click': []
 }>()
 
@@ -130,7 +130,6 @@ const closeMenu = () => {
 
 const handleAdminClick = () => {
   closeMenu()
-  // Emit the admin-click event
-  document.dispatchEvent(new CustomEvent('admin-click'))
+  emit('admin-click')
 }
 </script>
