@@ -74,15 +74,33 @@
               type="email"
               v-model="newsletterEmail"
               placeholder="Tu email"
-              class="w-full px-3 py-2 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300 text-sm"
+              :disabled="newsletterLoading"
+              class="w-full px-3 py-2 bg-dark-800 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300 text-sm disabled:opacity-50"
+              required
             />
             <button
               type="submit"
-              class="w-full bg-gradient-gold text-dark-900 py-2 rounded-lg font-medium text-sm hover:scale-105 transition-transform duration-300"
+              :disabled="newsletterLoading || !newsletterEmail.trim()"
+              class="w-full bg-gradient-gold text-dark-900 py-2 rounded-lg font-medium text-sm hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2"
             >
-              Suscribirse
+              <Mail v-if="!newsletterLoading" class="w-4 h-4" />
+              <div v-else class="w-4 h-4 bg-dark-900 rounded-full animate-pulse"></div>
+              <span>{{ newsletterLoading ? 'Suscribiendo...' : 'Suscribirse' }}</span>
             </button>
           </form>
+
+          <!-- Success/Error Messages -->
+          <div v-if="newsletterMessage" class="mt-3 p-3 rounded-lg text-sm" :class="[
+            newsletterSuccess 
+              ? 'bg-green-900/30 border border-green-500/30 text-green-400' 
+              : 'bg-red-900/30 border border-red-500/30 text-red-400'
+          ]">
+            <div class="flex items-center space-x-2">
+              <CheckCircle v-if="newsletterSuccess" class="w-4 h-4 flex-shrink-0" />
+              <AlertCircle v-else class="w-4 h-4 flex-shrink-0" />
+              <span>{{ newsletterMessage }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -114,16 +132,45 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Radio, Heart, Mail, Phone, MapPin } from 'lucide-vue-next'
+import { Radio, Heart, Mail, Phone, MapPin, CheckCircle, AlertCircle } from 'lucide-vue-next'
+import { useNewsletter } from '../composables/useNewsletter'
+
+const { subscribe } = useNewsletter()
 
 const newsletterEmail = ref('')
+const newsletterLoading = ref(false)
+const newsletterMessage = ref('')
+const newsletterSuccess = ref(false)
 const currentYear = computed(() => new Date().getFullYear())
 
-const handleNewsletterSubmit = (e: Event) => {
+const handleNewsletterSubmit = async (e: Event) => {
   e.preventDefault()
-  console.log('Newsletter subscription:', newsletterEmail.value)
-  alert('¡Gracias por suscribirte!')
-  newsletterEmail.value = ''
+  
+  if (!newsletterEmail.value.trim()) return
+  
+  newsletterLoading.value = true
+  newsletterMessage.value = ''
+  
+  try {
+    const result = await subscribe(newsletterEmail.value.trim(), 'footer')
+    
+    newsletterSuccess.value = result.success
+    newsletterMessage.value = result.message
+    
+    if (result.success) {
+      newsletterEmail.value = ''
+    }
+  } catch (error) {
+    newsletterSuccess.value = false
+    newsletterMessage.value = 'Error al procesar la suscripción. Inténtalo de nuevo.'
+  } finally {
+    newsletterLoading.value = false
+    
+    // Clear message after 5 seconds
+    setTimeout(() => {
+      newsletterMessage.value = ''
+    }, 5000)
+  }
 }
 
 const quickLinks = [

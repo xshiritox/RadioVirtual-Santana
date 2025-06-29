@@ -97,13 +97,13 @@
           </div>
 
           <!-- Tabs -->
-          <div class="flex space-x-4 mb-8">
+          <div class="flex space-x-4 mb-8 overflow-x-auto">
             <button
               v-for="tab in tabs"
               :key="tab.id"
               @click="activeTab = tab.id"
               :class="[
-                'px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2',
+                'px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 whitespace-nowrap',
                 activeTab === tab.id
                   ? 'bg-gradient-gold text-dark-900'
                   : 'bg-dark-700 text-silver-400 hover:text-gold-400'
@@ -318,6 +318,130 @@
             </div>
           </div>
 
+          <!-- Newsletter Tab -->
+          <div v-if="activeTab === 'newsletter'" class="space-y-6">
+            <!-- Real-time Status for Newsletter -->
+            <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 flex items-center space-x-3">
+              <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <div>
+                <p class="text-green-400 font-medium">Newsletter en Tiempo Real</p>
+                <p class="text-green-300 text-sm">Las suscripciones aparecen automáticamente</p>
+              </div>
+            </div>
+
+            <!-- Newsletter Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-gold-400 mb-1">{{ newsletterStats.total }}</div>
+                <div class="text-silver-400 text-sm">Total Suscriptores</div>
+              </div>
+              <div class="bg-dark-700/50 border border-green-500/20 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-green-400 mb-1">{{ newsletterStats.active }}</div>
+                <div class="text-silver-400 text-sm">Activos</div>
+              </div>
+              <div class="bg-dark-700/50 border border-blue-500/20 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-blue-400 mb-1">{{ newsletterStats.todayCount }}</div>
+                <div class="text-silver-400 text-sm">Hoy</div>
+              </div>
+              <div class="bg-dark-700/50 border border-purple-500/20 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-purple-400 mb-1">{{ newsletterStats.thisWeekCount }}</div>
+                <div class="text-silver-400 text-sm">Esta Semana</div>
+              </div>
+            </div>
+
+            <!-- Newsletter Actions -->
+            <div class="flex flex-wrap gap-4">
+              <button
+                @click="exportNewsletterSubscribers"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-transform flex items-center space-x-2"
+              >
+                <Download class="w-4 h-4" />
+                <span>Exportar CSV</span>
+              </button>
+            </div>
+
+            <!-- Subscribers List -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-lg font-semibold text-white">Suscriptores</h4>
+                <div class="text-sm text-silver-400">
+                  {{ newsletterSubscribers.length }} suscriptor{{ newsletterSubscribers.length !== 1 ? 'es' : '' }}
+                </div>
+              </div>
+
+              <div v-if="newsletterLoading" class="text-center py-8">
+                <div class="inline-flex items-center space-x-2 text-gold-400">
+                  <div class="w-4 h-4 bg-gold-400 rounded-full animate-pulse"></div>
+                  <span>Cargando suscriptores...</span>
+                </div>
+              </div>
+
+              <div v-else-if="newsletterSubscribers.length === 0" class="text-center py-8">
+                <div class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-6">
+                  <Mail class="w-12 h-12 text-gold-400 mx-auto mb-3 opacity-50" />
+                  <p class="text-silver-400">No hay suscriptores aún</p>
+                </div>
+              </div>
+
+              <div v-else class="space-y-2 max-h-96 overflow-y-auto">
+                <div
+                  v-for="subscriber in newsletterSubscribers"
+                  :key="subscriber.id"
+                  class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-4 flex items-center justify-between"
+                >
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-3">
+                      <div class="flex items-center space-x-2">
+                        <Mail class="w-4 h-4 text-gold-400" />
+                        <span class="text-white font-medium">{{ subscriber.email }}</span>
+                      </div>
+                      <div :class="[
+                        'px-2 py-0.5 rounded text-xs font-medium',
+                        subscriber.status === 'active' 
+                          ? 'bg-green-900/30 text-green-400' 
+                          : 'bg-red-900/30 text-red-400'
+                      ]">
+                        {{ subscriber.status === 'active' ? 'Activo' : 'Inactivo' }}
+                      </div>
+                      <div v-if="isRecentSubscriber(subscriber)" class="bg-blue-500 text-white px-2 py-0.5 rounded text-xs font-medium">
+                        Nuevo
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-1 text-silver-400 text-sm">
+                      <span>{{ formatDate(subscriber.subscribedAt) }}</span>
+                      <span v-if="subscriber.source">• {{ subscriber.source }}</span>
+                    </div>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button
+                      v-if="subscriber.status === 'active'"
+                      @click="handleUpdateSubscriber(subscriber.id, { status: 'inactive' })"
+                      class="bg-yellow-600 text-white p-2 rounded hover:scale-105 transition-transform"
+                      title="Desactivar"
+                    >
+                      <UserX class="w-4 h-4" />
+                    </button>
+                    <button
+                      v-else
+                      @click="handleUpdateSubscriber(subscriber.id, { status: 'active' })"
+                      class="bg-green-600 text-white p-2 rounded hover:scale-105 transition-transform"
+                      title="Activar"
+                    >
+                      <UserCheck class="w-4 h-4" />
+                    </button>
+                    <button
+                      @click="handleDeleteSubscriber(subscriber.id)"
+                      class="bg-red-600 text-white p-2 rounded hover:scale-105 transition-transform"
+                      title="Eliminar"
+                    >
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Settings Tab -->
           <div v-if="activeTab === 'settings'" class="bg-dark-700/50 border border-gold-400/20 rounded-lg p-6">
             <h4 class="text-lg font-semibold text-white mb-6 flex items-center">
@@ -411,7 +535,11 @@ import { ref, reactive, watch, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useFirestore } from '../composables/useFirestore'
 import { useSettings } from '../composables/useSettings'
-import { X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings, Calendar } from 'lucide-vue-next'
+import { useNewsletter } from '../composables/useNewsletter'
+import { 
+  X, Edit3, Save, Plus, Trash2, Eye, EyeOff, Settings, Calendar, 
+  Mail, Download, UserX, UserCheck
+} from 'lucide-vue-next'
 
 interface Props {
   isOpen: boolean
@@ -426,6 +554,14 @@ defineEmits<{
 const { user, login, logout } = useAuth()
 const { data: programs, loading: programsLoading, addDocument, updateDocument, deleteDocument } = useFirestore('programs')
 const { settings, updateSettings } = useSettings()
+const { 
+  subscribers: newsletterSubscribers, 
+  stats: newsletterStats, 
+  loading: newsletterLoading,
+  updateSubscriber: updateNewsletterSubscriber,
+  deleteSubscriber: deleteNewsletterSubscriber,
+  exportSubscribers: exportNewsletterSubscribers
+} = useNewsletter()
 
 const loginData = reactive({ email: '', password: '' })
 const showPassword = ref(false)
@@ -459,6 +595,7 @@ watch(settings, (newSettings) => {
 
 const tabs = [
   { id: 'programs', label: 'Programas', icon: Calendar },
+  { id: 'newsletter', label: 'Newsletter', icon: Mail },
   { id: 'settings', label: 'Configuración', icon: Settings }
 ]
 
@@ -471,6 +608,28 @@ const isRecentlyUpdated = (program: any) => {
   const diffInMinutes = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
   
   return diffInMinutes < 5
+}
+
+// Check if a subscriber is recent (within last 24 hours)
+const isRecentSubscriber = (subscriber: any) => {
+  const subscribedAt = subscriber.subscribedAt instanceof Date 
+    ? subscriber.subscribedAt 
+    : new Date(subscriber.subscribedAt)
+  const now = new Date()
+  const diffInHours = (now.getTime() - subscribedAt.getTime()) / (1000 * 60 * 60)
+  
+  return diffInHours < 24
+}
+
+const formatDate = (date: Date | string) => {
+  const d = date instanceof Date ? date : new Date(date)
+  return d.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 const handleLogin = async (e: Event) => {
@@ -522,6 +681,24 @@ const handleDeleteProgram = async (id: string) => {
   }
 }
 
+const handleUpdateSubscriber = async (id: string, updates: any) => {
+  try {
+    await updateNewsletterSubscriber(id, updates)
+  } catch (error) {
+    alert('Error al actualizar el suscriptor')
+  }
+}
+
+const handleDeleteSubscriber = async (id: string) => {
+  if (confirm('¿Estás seguro de que quieres eliminar este suscriptor?')) {
+    try {
+      await deleteNewsletterSubscriber(id)
+    } catch (error) {
+      alert('Error al eliminar el suscriptor')
+    }
+  }
+}
+
 const handleSaveSettings = async () => {
   settingsLoading.value = true
   settingsSaved.value = false
@@ -550,6 +727,6 @@ const handleSaveSettings = async () => {
 
 const onImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
-  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSIjMjEyNTI5Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iOTAiIGZpbGw9IiM2Qzc1N0QiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VmlkZW8gbm8gZW5jb250cmFkbzwvdGV4dD4KPC9zdmc+'
+  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSIjMjEyNTI5Ii8+Cjx0ZXh0IHg9IjE2MCIgeT0iOTAiIGZpbGw9IiM2Qzc1N0QiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VmlkZW8gbm8gZW5jb250cmFkbzwvdGV4dD4KPHN2Zz4='
 }
 </script>
