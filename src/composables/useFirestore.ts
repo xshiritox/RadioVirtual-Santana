@@ -20,20 +20,25 @@ export const useFirestore = (collectionName: string) => {
 
   const setupRealtimeListener = () => {
     try {
-      // Create query with ordering for consistent results
-      const q = query(
-        collection(db, collectionName),
-        orderBy('createdAt', 'desc')
-      )
-
-      // Set up real-time listener
+      // Create basic collection reference first
+      const collectionRef = collection(db, collectionName)
+      
+      // Set up real-time listener without ordering initially
       unsubscribe = onSnapshot(
-        q,
+        collectionRef,
         (querySnapshot) => {
           const docs = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
           }))
+          
+          // Sort on client side to avoid index requirements
+          docs.sort((a, b) => {
+            const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt || 0)
+            const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt || 0)
+            return bTime.getTime() - aTime.getTime()
+          })
+          
           data.value = docs
           loading.value = false
           error.value = null
@@ -57,16 +62,29 @@ export const useFirestore = (collectionName: string) => {
   const fetchDataOnce = async () => {
     try {
       loading.value = true
-      const querySnapshot = await getDocs(collection(db, collectionName))
+      error.value = null
+      
+      const collectionRef = collection(db, collectionName)
+      const querySnapshot = await getDocs(collectionRef)
+      
       const docs = querySnapshot.docs.map(doc => ({ 
         id: doc.id, 
         ...doc.data() 
       }))
+      
+      // Sort on client side
+      docs.sort((a, b) => {
+        const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt || 0)
+        const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt || 0)
+        return bTime.getTime() - aTime.getTime()
+      })
+      
       data.value = docs
-      error.value = null
+      console.log(`Fetched ${docs.length} documents from ${collectionName}`)
     } catch (err) {
       console.error(`Error fetching data for ${collectionName}:`, err)
       error.value = err instanceof Error ? err.message : 'Error desconocido'
+      data.value = []
     } finally {
       loading.value = false
     }

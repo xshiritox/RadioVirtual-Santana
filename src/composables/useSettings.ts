@@ -33,11 +33,9 @@ export const useSettings = () => {
             settings.value = { ...defaultSettings, ...data }
             console.log('Real-time settings update received:', data)
           } else {
-            // Create default settings if they don't exist
-            setDoc(docRef, defaultSettings).then(() => {
-              settings.value = { ...defaultSettings }
-              console.log('Default settings created')
-            })
+            // Document doesn't exist, use defaults
+            settings.value = { ...defaultSettings }
+            console.log('Settings document does not exist, using defaults')
           }
           loading.value = false
           error.value = null
@@ -60,17 +58,20 @@ export const useSettings = () => {
   const fetchSettingsOnce = async () => {
     try {
       loading.value = true
+      error.value = null
+      
       const docRef = doc(db, 'settings', 'general')
       const docSnap = await getDoc(docRef)
       
       if (docSnap.exists()) {
-        settings.value = { ...defaultSettings, ...docSnap.data() as Settings }
+        const data = docSnap.data() as Settings
+        settings.value = { ...defaultSettings, ...data }
+        console.log('Settings fetched successfully:', data)
       } else {
-        // Create default settings if they don't exist
-        await setDoc(docRef, defaultSettings)
+        // Document doesn't exist, use defaults
         settings.value = { ...defaultSettings }
+        console.log('Settings document does not exist, using defaults')
       }
-      error.value = null
     } catch (err) {
       console.error('Error fetching settings:', err)
       error.value = err instanceof Error ? err.message : 'Error desconocido'
