@@ -35,7 +35,7 @@
                 type="email"
                 v-model="loginData.email"
                 class="w-full px-4 py-3 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                placeholder="admin@radiosantana.com"
+                placeholder="Usuario/Correo"
                 required
               />
             </div>
@@ -73,9 +73,7 @@
 
           <div class="mt-6 p-4 bg-dark-700/50 rounded-lg border border-gold-400/20">
             <p class="text-silver-400 text-sm text-center">
-              <strong>Credenciales de Demo:</strong><br />
-              Email: admin@radiosantana.com<br />
-              Contraseña: admin123
+              <strong>Acceso para administradores</strong>
             </p>
           </div>
         </div>
