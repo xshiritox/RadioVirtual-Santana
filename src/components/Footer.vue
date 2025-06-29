@@ -18,8 +18,11 @@
             </h3>
           </div>
           <p class="text-silver-400 mb-6 leading-relaxed">
-            Tu radio virtual que conecta corazones a través de la música. 
-            Acompañándote las 24 horas del día con la mejor programación.
+            RadioVirtual Santana es una emisora en línea dedicada a conectar
+            emociones a través de una programación musical de alta calidad,
+            disponible las 24 horas. Nuestro compromiso es brindar compañía,
+            inspiración y entretenimiento a una audiencia global,
+            con un estilo cercano, moderno y profesional.
           </p>
         </div>
 

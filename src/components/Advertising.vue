@@ -68,6 +68,7 @@
 
           <div class="mt-auto pt-6">
             <button 
+              @click="confirmPurchase(pkg)"
               :class="[
                 'w-full py-3 rounded-full font-semibold transition-all duration-300',
                 pkg.highlighted
@@ -103,13 +104,57 @@
         </div>
       </div>
     </div>
+
+    <!-- Diálogo de Confirmación -->
+    <div v-if="showConfirmation" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div class="bg-dark-800 rounded-2xl p-6 max-w-md w-full border border-gold-400/30">
+        <div class="text-center">
+          <h3 class="text-2xl font-bold text-white mb-4">¿Estás seguro?</h3>
+          <p class="text-silver-400 mb-6">
+            Serás redirigido a WhatsApp para continuar con la solicitud del paquete 
+            <span class="text-gold-400 font-semibold">{{ selectedPackage?.name }}</span>.
+          </p>
+          <div class="flex justify-center space-x-4">
+            <button 
+              @click="showConfirmation = false"
+              class="px-6 py-2 border border-silver-400 text-silver-400 rounded-full hover:bg-silver-400/10 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button 
+              @click="proceedToWhatsApp"
+              class="px-6 py-2 bg-gradient-gold text-dark-900 font-semibold rounded-full hover:opacity-90 transition-opacity"
+            >
+              Sí, continuar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Megaphone, TrendingUp, Target, BarChart3, Play, ExternalLink } from 'lucide-vue-next'
 import { useSettings } from '../composables/useSettings'
+
+const selectedPackage = ref(null)
+const showConfirmation = ref(false)
+
+const confirmPurchase = (pkg) => {
+  selectedPackage.value = pkg
+  showConfirmation.value = true
+}
+
+const proceedToWhatsApp = () => {
+  if (selectedPackage.value) {
+    const pkg = selectedPackage.value
+    const message = `Hola Radio Santana, estoy interesado en contratar el paquete ${pkg.name} (${pkg.price}${pkg.period}). Me gustaría más información.`
+    window.open(`https://wa.me/+573106035384?text=${encodeURIComponent(message)}`, '_blank')
+    showConfirmation.value = false
+  }
+}
 
 const { settings } = useSettings()
 
