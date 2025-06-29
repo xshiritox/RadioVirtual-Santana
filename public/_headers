@@ -1,7 +1,7 @@
-# Netlify headers file to ensure correct MIME types and YouTube compatibility
+# Netlify headers file to ensure correct MIME types
 /*
   X-Frame-Options: SAMEORIGIN
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: https://img.youtube.com; font-src 'self' https:; connect-src 'self' https:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; media-src 'self' https:;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self';
   Referrer-Policy: strict-origin-when-cross-origin
 
 # JavaScript modules

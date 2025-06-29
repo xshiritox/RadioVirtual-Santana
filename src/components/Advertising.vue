@@ -135,14 +135,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Megaphone, TrendingUp, Target, BarChart3, Play, ExternalLink } from 'lucide-vue-next'
-import { useSettings } from '../composables/useSettings'
+import { ref } from 'vue'
+import { Megaphone, TrendingUp, Target, BarChart3 } from 'lucide-vue-next'
 
-const selectedPackage = ref(null)
+interface AdPackage {
+  name: string;
+  price: string;
+  period: string;
+  features: string[];
+  highlighted: boolean;
+}
+
+const selectedPackage = ref<AdPackage | null>(null)
 const showConfirmation = ref(false)
 
-const confirmPurchase = (pkg) => {
+const confirmPurchase = (pkg: AdPackage) => {
   selectedPackage.value = pkg
   showConfirmation.value = true
 }
@@ -154,18 +161,6 @@ const proceedToWhatsApp = () => {
     window.open(`https://wa.me/+573106035384?text=${encodeURIComponent(message)}`, '_blank')
     showConfirmation.value = false
   }
-}
-
-const { settings } = useSettings()
-
-// Use the video ID from settings, fallback to default
-const currentVideoId = computed(() => 
-  settings.value.youtubeVideoId || 'dQw4w9WgXcQ'
-)
-
-const openPromoVideo = () => {
-  const youtubeUrl = `https://www.youtube.com/watch?v=${currentVideoId.value}`
-  window.open(youtubeUrl, '_blank', 'noopener,noreferrer')
 }
 
 const adPackages = [
