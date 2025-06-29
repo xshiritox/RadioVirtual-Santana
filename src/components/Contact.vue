@@ -151,7 +151,7 @@ const socialLinks = [
   { 
     icon: MessageCircle, 
     name: 'WhatsApp', 
-    url: 'https://wa.me/573106035384', 
+    url: 'https://wa.me/+573106035384', 
     color: 'hover:text-green-400',
     target: '_blank',
     rel: 'noopener noreferrer'

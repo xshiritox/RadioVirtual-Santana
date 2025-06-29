@@ -92,9 +92,14 @@
         </p>
         
         <div class="flex justify-center">
-          <button class="bg-gradient-gold text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform">
+          <a 
+            href="https://wa.me/+573106035384?text=Hola%20Radio%20Santana,%20me%20gustaría%20solicitar%20una%20cotización%20para%20publicidad." 
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-gradient-gold text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform inline-block"
+          >
             Solicitar Cotización
-          </button>
+          </a>
         </div>
       </div>
     </div>

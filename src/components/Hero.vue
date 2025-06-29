@@ -52,10 +52,13 @@
 
         <!-- CTA Buttons -->
         <div class="flex justify-center items-center mb-16">
-          <button class="border-2 border-gold-400 text-gold-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold-400 hover:text-dark-900 transition-all duration-300 flex items-center space-x-3">
+          <a 
+            href="#programs" 
+            class="border-2 border-gold-400 text-gold-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold-400 hover:text-dark-900 transition-all duration-300 flex items-center space-x-3"
+          >
             <Headphones class="w-5 h-5" />
             <span>Programación</span>
-          </button>
+          </a>
         </div>
 
         <!-- Stats -->
