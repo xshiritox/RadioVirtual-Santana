@@ -27,7 +27,7 @@
           
           <div v-if="user" class="flex items-center space-x-4">
             <button
-              @click="$emit('admin-click')"
+              @click="emit('admin-click')"
               class="flex items-center space-x-2 bg-gradient-gold text-dark-900 px-4 py-2 rounded-full hover:scale-105 transition-transform font-medium"
             >
               <Settings class="w-4 h-4" />
@@ -42,7 +42,7 @@
           </div>
           <button
             v-else
-            @click="$emit('admin-click')"
+            @click="emit('admin-click')"
             class="text-silver-400 hover:text-gold-400 transition-colors duration-300"
           >
             Admin
