@@ -8,7 +8,8 @@ import {
   query,
   orderBy,
   where,
-  getDocs
+  getDocs,
+  updateDoc
 } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
@@ -64,14 +65,15 @@ export const useNewsletter = () => {
         },
         (err) => {
           console.error('Error in newsletter real-time listener:', err)
-          error.value = err.message
+          error.value = `Firestore permissions error: ${err.message}. Please check your Firebase security rules for the 'newsletter' collection.`
           loading.value = false
-          fetchSubscribersOnce()
+          // Don't fallback to fetchSubscribersOnce as it will have the same permission issue
         }
       )
     } catch (err) {
       console.error('Error setting up newsletter real-time listener:', err)
-      fetchSubscribersOnce()
+      error.value = `Setup error: ${err instanceof Error ? err.message : 'Unknown error'}`
+      loading.value = false
     }
   }
 
@@ -97,7 +99,11 @@ export const useNewsletter = () => {
       console.log(`Fetched ${docs.length} newsletter subscribers`)
     } catch (err) {
       console.error('Error fetching newsletter subscribers:', err)
-      error.value = err instanceof Error ? err.message : 'Error desconocido'
+      if (err instanceof Error && err.message.includes('Missing or insufficient permissions')) {
+        error.value = 'Firestore permissions error: Please check your Firebase security rules for the "newsletter" collection. You may need to allow read access.'
+      } else {
+        error.value = err instanceof Error ? err.message : 'Error desconocido'
+      }
       subscribers.value = []
     } finally {
       loading.value = false
@@ -167,6 +173,9 @@ export const useNewsletter = () => {
       return { success: true, message: '¡Suscripción exitosa! Gracias por unirte.' }
     } catch (err) {
       console.error('Error subscribing to newsletter:', err)
+      if (err instanceof Error && err.message.includes('Missing or insufficient permissions')) {
+        return { success: false, message: 'Error de permisos: Verifica la configuración de Firebase.' }
+      }
       const message = err instanceof Error ? err.message : 'Error al suscribirse'
       return { success: false, message }
     }
@@ -182,6 +191,9 @@ export const useNewsletter = () => {
       console.log('Newsletter subscriber updated:', id)
     } catch (err) {
       console.error('Error updating newsletter subscriber:', err)
+      if (err instanceof Error && err.message.includes('Missing or insufficient permissions')) {
+        throw new Error('Error de permisos: Verifica la configuración de Firebase.')
+      }
       throw err
     }
   }
@@ -192,6 +204,9 @@ export const useNewsletter = () => {
       console.log('Newsletter subscriber deleted:', id)
     } catch (err) {
       console.error('Error deleting newsletter subscriber:', err)
+      if (err instanceof Error && err.message.includes('Missing or insufficient permissions')) {
+        throw new Error('Error de permisos: Verifica la configuración de Firebase.')
+      }
       throw err
     }
   }
