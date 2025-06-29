@@ -4,7 +4,10 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src-elem 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; media-src 'self' https: data:; frame-src 'self';
   Referrer-Policy: strict-origin-when-cross-origin
 
-# JavaScript modules - CRITICAL: Correct MIME type
+# JavaScript modules - CRITICAL: Correct MIME type for all JS files
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
+
 /*.js
   Content-Type: application/javascript; charset=utf-8
 
@@ -12,8 +15,8 @@
 /*.mjs
   Content-Type: application/javascript; charset=utf-8
 
-# TypeScript files (compiled to JS)
-/*.ts
+# TypeScript files served as JS
+/src/*.ts
   Content-Type: application/javascript; charset=utf-8
 
 # CSS files

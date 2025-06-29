@@ -31,15 +31,16 @@ export default defineConfig({
     port: 5173,
     host: true,
     strictPort: true,
-    headers: {
-      'Content-Type': 'application/javascript; charset=utf-8'
+    middlewareMode: false,
+    fs: {
+      strict: false
     }
   },
   preview: {
     port: 4173,
     host: true,
-    headers: {
-      'Content-Type': 'application/javascript; charset=utf-8'
-    }
   },
+  esbuild: {
+    target: 'es2015'
+  }
 })
