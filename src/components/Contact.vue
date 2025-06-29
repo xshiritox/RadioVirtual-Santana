@@ -209,7 +209,7 @@ const socialLinks = [
   { 
     icon: Instagram, 
     name: 'Instagram', 
-    url: '#', 
+    url: 'https://www.instagram.com/radiovirtual_santana/', 
     color: 'hover:text-pink-400',
     target: '_blank',
     rel: 'noopener noreferrer'

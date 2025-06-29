@@ -68,14 +68,14 @@ const structuredData = {
   "broadcastFrequency": "Online Streaming",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+1-555-123-4567",
+    "telephone": "+57 310 6035384",
     "contactType": "customer service",
-    "email": "info@radiosantana.com"
+    "email": "radiosantana.nm@gmail.com"
   },
   "sameAs": [
-    "https://facebook.com/radiosantana",
-    "https://instagram.com/radiosantana",
-    "https://twitter.com/radiosantana"
+    "https://www.facebook.com/profile.php?id=61577153733772&locale=es_LA",
+    "https://www.instagram.com/radiovirtual_santana/",
+    "https://x.com/NMradio_santana"
   ]
 }
 

@@ -133,12 +133,6 @@
           Ver Programación Completa
         </button>
       </div>
-
-      <!-- Real-time Status Indicator -->
-      <div class="fixed bottom-20 left-6 z-40 bg-dark-800/90 backdrop-blur-md border border-gold-400/30 rounded-full px-4 py-2 flex items-center space-x-2">
-        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        <span class="text-green-400 text-sm font-medium">Tiempo Real</span>
-      </div>
     </div>
   </section>
 </template>

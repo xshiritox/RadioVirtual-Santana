@@ -20,7 +20,7 @@
             <div class="absolute inset-0 bg-gradient-gold rounded-full opacity-20 animate-pulse"></div>
             <div class="absolute inset-2 bg-gradient-gold rounded-full flex items-center justify-center overflow-hidden animate-glow">
               <img 
-                :src="'/logo.WebP?url'" 
+                :src="logoUrl" 
                 alt="Radio Santana" 
                 class="w-full h-full object-cover"
               />
@@ -76,8 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { Headphones, Clock, Users } from 'lucide-vue-next'
+
+const logoUrl = new URL('/logo.WebP', import.meta.url).href
 
 const listeners = ref(0)
 
