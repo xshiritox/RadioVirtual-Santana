@@ -98,7 +98,7 @@ const audioRef = ref<HTMLAudioElement>()
 
 // Use stream URL from settings with fallback
 const currentStreamUrl = computed(() => 
-  settings.value.streamUrl || "https://stream.zeno.fm/your-stream-url"
+  settings.value.streamUrl || "https://radiovirtualsantana.listen2myshow.com"
 )
 
 // Watch for stream URL changes and update audio source

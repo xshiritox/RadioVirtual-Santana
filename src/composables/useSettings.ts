@@ -9,7 +9,7 @@ interface Settings {
 }
 
 const defaultSettings: Settings = {
-  streamUrl: 'https://stream.zeno.fm/your-stream',
+  streamUrl: 'https://radiovirtualsantana.listen2myshow.com',
   youtubeVideoId: 'dQw4w9WgXcQ',
   siteTitle: 'Radio Santana - Tu Radio Virtual'
 }
