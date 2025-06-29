@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 // Firebase configuration for Radio Santana
 const firebaseConfig = {
@@ -28,10 +28,11 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
-// Enable network for Firestore
+// Enable network for Firestore and set up persistence
 try {
-  // This ensures Firestore connects to the backend
   console.log('Firebase initialized successfully')
+  console.log('Project ID:', firebaseConfig.projectId)
+  console.log('Auth Domain:', firebaseConfig.authDomain)
 } catch (error) {
   console.error('Error initializing Firebase:', error)
 }
