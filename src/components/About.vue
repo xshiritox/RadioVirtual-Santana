@@ -34,41 +34,6 @@
           <p class="text-silver-400 text-sm">{{ feature.description }}</p>
         </div>
       </div>
-
-      <!-- Story Section -->
-      <div class="max-w-4xl mx-auto text-center">
-        <h3 class="text-2xl md:text-3xl font-bold text-white mb-8">
-          Nuestra Historia
-        </h3>
-        <div class="bg-dark-800/30 backdrop-blur-sm border border-gold-400/20 rounded-3xl p-8 md:p-12">
-          <p class="text-lg text-silver-300 leading-relaxed mb-6">
-            Radio Santana nació de la pasión por conectar personas a través de la música. 
-            Desde nuestros inicios, hemos creído que la radio es más que entretenimiento: 
-            es un puente que une comunidades, culturas y corazones.
-          </p>
-          <p class="text-lg text-silver-300 leading-relaxed mb-8">
-            Con tecnología de vanguardia y un equipo de profesionales apasionados, 
-            ofrecemos una experiencia auditiva única que trasciende fronteras y 
-            acompaña a nuestros oyentes en cada momento de su día.
-          </p>
-          
-          <!-- Stats -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-gold-400 mb-2">5+</div>
-              <div class="text-silver-400">Años de Experiencia</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-gold-400 mb-2">10K+</div>
-              <div class="text-silver-400">Oyentes Fieles</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-gold-400 mb-2">24/7</div>
-              <div class="text-silver-400">Transmisión Continua</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 </template>

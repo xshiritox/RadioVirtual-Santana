@@ -133,7 +133,7 @@ const currentVideoId = computed(() =>
 const adPackages = [
   {
     name: 'Básico',
-    price: '$350.000',
+    price: '$80.000',
     period: 'COP',
     features: [
       'Spots Comercial',
@@ -142,7 +142,7 @@ const adPackages = [
   },
   {
     name: 'Estándar',
-    price: '$750.000',
+    price: '$150.000',
     period: 'COP',
     features: [
       'Spots Comercial',
@@ -152,7 +152,7 @@ const adPackages = [
   },
   {
     name: 'Premium',
-    price: '$1.500.000',
+    price: '500.000',
     period: 'COP',
     features: [
       'Spots Comercial',
@@ -164,7 +164,7 @@ const adPackages = [
   },
   {
     name: 'VIP',
-    price: '$3.000.000',
+    price: '$1.000.000',
     period: 'COP',
     features: [
       'Spots Comercial',
