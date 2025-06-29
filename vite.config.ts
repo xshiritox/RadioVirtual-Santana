@@ -11,36 +11,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
       },
     },
     assetsDir: 'assets',
     sourcemap: false,
-    target: 'es2015',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
   },
   server: {
     port: 5173,
     host: true,
     strictPort: true,
-    middlewareMode: false,
-    fs: {
-      strict: false
-    }
   },
   preview: {
     port: 4173,
     host: true,
   },
-  esbuild: {
-    target: 'es2015'
-  }
 })

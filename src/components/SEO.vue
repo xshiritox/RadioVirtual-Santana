@@ -49,7 +49,6 @@
     <!-- Additional Meta Tags -->
     <meta name="theme-color" content="#FFD700" />
     <meta name="msapplication-TileColor" content="#212529" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
 
     <!-- Canonical URL -->
     <link rel="canonical" :href="siteData.siteUrl" />
@@ -135,11 +134,15 @@ const structuredData = {
   "knowsAbout": ["Música", "Entretenimiento", "Radio Online", "Eventos en vivo"]
 }
 
-// Add structured data with error handling and performance optimization
 onMounted(() => {
   try {
     // Remove existing structured data to avoid duplicates
-    document.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove())
+    const existingScripts = document.querySelectorAll('script[type="application/ld+json"]')
+    existingScripts.forEach(script => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script)
+      }
+    })
     
     // Create new structured data
     const script = document.createElement('script')
@@ -147,26 +150,8 @@ onMounted(() => {
     script.setAttribute('data-vue-seo', 'true')
     script.textContent = JSON.stringify(structuredData, null, 2)
     
-    // Add to head with defer to not block rendering
+    // Add to head
     document.head.appendChild(script)
-    
-    // Preconnect to important origins
-    const preconnectUrls = [
-      'https://www.google-analytics.com',
-      'https://www.googletagmanager.com',
-      'https://www.facebook.com',
-      'https://connect.facebook.net',
-      'https://platform.twitter.com',
-      'https://www.instagram.com'
-    ]
-    
-    preconnectUrls.forEach(url => {
-      const link = document.createElement('link')
-      link.rel = 'preconnect'
-      link.href = url
-      link.crossOrigin = 'anonymous'
-      document.head.appendChild(link)
-    })
   } catch (error) {
     console.error('Error adding structured data:', error)
   }
