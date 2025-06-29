@@ -81,19 +81,29 @@
         </div>
       </div>
 
-      <!-- Featured Video Section -->
+      <!-- Featured Video Section - Simplified -->
       <div class="bg-dark-700/30 backdrop-blur-sm border border-gold-400/20 rounded-3xl p-8 mb-16">
         <h3 class="text-2xl md:text-3xl font-bold text-center text-white mb-8">
           Conoce Nuestro Alcance
         </h3>
         
         <div class="max-w-4xl mx-auto">
-          <YouTubePlayer
-            :video-id="currentVideoId"
-            title="Radio Santana - Video Promocional"
-            description="Descubre el poder de la publicidad en Radio Santana y cómo podemos ayudar a hacer crecer tu negocio"
-            :autoplay="true"
-          />
+          <!-- Simple Video Link instead of embed -->
+          <div class="aspect-video rounded-2xl overflow-hidden bg-dark-600 flex items-center justify-center cursor-pointer group" @click="openPromoVideo">
+            <div class="text-center">
+              <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                <Play class="w-12 h-12 text-white ml-1" fill="currentColor" />
+              </div>
+              <h4 class="text-2xl font-semibold text-white mb-4">Video Promocional</h4>
+              <p class="text-silver-400 mb-6 max-w-md mx-auto">
+                Descubre el poder de la publicidad en Radio Santana y cómo podemos ayudar a hacer crecer tu negocio
+              </p>
+              <div class="bg-red-600 text-white px-6 py-3 rounded-full text-lg font-medium inline-flex items-center space-x-2">
+                <ExternalLink class="w-5 h-5" />
+                <span>Ver en YouTube</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -119,8 +129,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Megaphone, TrendingUp, Target, BarChart3 } from 'lucide-vue-next'
-import YouTubePlayer from './YouTubePlayer.vue'
+import { Megaphone, TrendingUp, Target, BarChart3, Play, ExternalLink } from 'lucide-vue-next'
 import { useSettings } from '../composables/useSettings'
 
 const { settings } = useSettings()
@@ -129,6 +138,11 @@ const { settings } = useSettings()
 const currentVideoId = computed(() => 
   settings.value.youtubeVideoId || 'dQw4w9WgXcQ'
 )
+
+const openPromoVideo = () => {
+  const youtubeUrl = `https://www.youtube.com/watch?v=${currentVideoId.value}`
+  window.open(youtubeUrl, '_blank', 'noopener,noreferrer')
+}
 
 const adPackages = [
   {
