@@ -96,36 +96,33 @@ const isMuted = ref(false)
 const isLive = ref(true)
 const audioRef = ref<HTMLAudioElement>()
 
-// Use stream URL from settings with fallback
+// Usar archivo de audio local
 const currentStreamUrl = computed(() => 
-  settings.value.streamUrl || "https://radiovirtualsantana.listen2myshow.com"
+  "/radiospot.mp3"
 )
 
-// Watch for stream URL changes and update audio source
-watch(currentStreamUrl, (newUrl) => {
-  if (audioRef.value && newUrl) {
-    const wasPlaying = isPlaying.value
-    if (wasPlaying) {
-      audioRef.value.pause()
-    }
-    audioRef.value.src = newUrl
-    if (wasPlaying) {
-      audioRef.value.play().catch(console.error)
-    }
-    console.log('Stream URL updated:', newUrl)
+// Inicializar el reproductor con el archivo local
+onMounted(() => {
+  if (audioRef.value) {
+    // Configurar el volumen inicial
+    audioRef.value.volume = volume.value
+    
+    // Cargar el archivo de audio local
+    audioRef.value.src = currentStreamUrl.value
+    
+    // Manejador para cuando el audio esté listo
+    audioRef.value.addEventListener('canplay', () => {
+      console.log('Audio listo para reproducir')
+    })
+    
+    // Manejador de errores
+    audioRef.value.addEventListener('error', (e) => {
+      console.error('Error al cargar el audio:', audioRef.value?.error)
+    })
   }
 })
 
-const togglePlay = () => {
-  if (audioRef.value) {
-    if (isPlaying.value) {
-      audioRef.value.pause()
-    } else {
-      audioRef.value.play().catch(console.error)
-    }
-    isPlaying.value = !isPlaying.value
-  }
-}
+
 
 const toggleMute = () => {
   if (audioRef.value) {
@@ -149,11 +146,27 @@ watch(volume, (newVolume) => {
   }
 })
 
-onMounted(() => {
-  if (audioRef.value) {
-    audioRef.value.volume = volume.value
+// Manejador para el botón de reproducción/pausa
+const togglePlay = () => {
+  if (!audioRef.value) return
+  
+  if (isPlaying.value) {
+    audioRef.value.pause()
+  } else {
+    audioRef.value.play()
+      .then(() => {
+        console.log('Reproduciendo audio local')
+      })
+      .catch(error => {
+        console.error('Error al reproducir:', error)
+        // Si hay un error, intentar cargar el audio nuevamente
+        if (audioRef.value) {
+          audioRef.value.load()
+        }
+      })
   }
-})
+  isPlaying.value = !isPlaying.value
+}
 </script>
 
 <style scoped>

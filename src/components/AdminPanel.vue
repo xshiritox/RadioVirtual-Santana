@@ -436,11 +436,11 @@
                   <select
                     v-model="newsForm.category"
                     class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
+                    required
                   >
-                    <option value="general">General</option>
-                    <option value="eventos">Eventos</option>
-                    <option value="programas">Programas</option>
-                    <option value="anuncios">Anuncios</option>
+                    <option v-for="category in NEWS_CATEGORIES" :key="category" :value="category">
+                      {{ category }}
+                    </option>
                   </select>
                 </div>
 
@@ -451,6 +451,7 @@
                     v-model="newsForm.imageUrl"
                     class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
                     placeholder="https://ejemplo.com/imagen.jpg"
+                    required
                   />
                   <div v-if="newsForm.imageUrl" class="mt-2">
                     <img :src="newsForm.imageUrl" alt="Vista previa" class="h-32 w-full object-cover rounded-lg">
@@ -498,107 +499,6 @@
             </form>
           </div>
         </div>
-
-        <!-- Add Program Modal -->
-        <div v-if="showAddProgram" class="fixed inset-0 z-50 bg-dark-900/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div class="bg-dark-800 border border-gold-400/30 rounded-2xl w-full max-w-2xl">
-            <div class="flex items-center justify-between p-6 border-b border-gold-400/20">
-              <h3 class="text-xl font-bold text-gold-400">
-                {{ editingProgram ? 'Editar Programa' : 'Nuevo Programa' }}
-              </h3>
-              <button
-                @click="closeAddProgram"
-                class="text-silver-400 hover:text-gold-400 transition-colors"
-              >
-                <X class="w-6 h-6" />
-              </button>
-            </div>
-
-            <form @submit="handleProgramSubmit" class="p-6 space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-silver-300 mb-2">Título</label>
-                  <input
-                    type="text"
-                    v-model="programForm.title"
-                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-silver-300 mb-2">Locutor</label>
-                  <input
-                    type="text"
-                    v-model="programForm.host"
-                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-silver-300 mb-2">Horario</label>
-                  <input
-                    type="text"
-                    v-model="programForm.time"
-                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                    placeholder="ej: 10:00 - 12:00"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-silver-300 mb-2">Imagen URL</label>
-                  <input
-                    type="url"
-                    v-model="programForm.image"
-                    class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-silver-300 mb-2">Descripción</label>
-                <textarea
-                  v-model="programForm.description"
-                  rows="3"
-                  class="w-full px-3 py-2 bg-dark-700 border border-gold-400/20 rounded-lg text-white placeholder-silver-500 focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all duration-300"
-                  required
-                ></textarea>
-              </div>
-
-              <div class="flex items-center space-x-4">
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    v-model="programForm.featured"
-                    class="w-4 h-4 text-gold-400 bg-dark-700 border-gold-400/20 rounded focus:ring-gold-400/20"
-                  />
-                  <span class="text-silver-300 text-sm">Programa destacado</span>
-                </label>
-              </div>
-
-              <div class="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  @click="closeAddProgram"
-                  class="px-4 py-2 text-silver-400 hover:text-white transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  :disabled="programSubmitting"
-                  class="bg-gradient-gold text-dark-900 px-6 py-2 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 disabled:opacity-50 flex items-center space-x-2"
-                >
-                  <Save class="w-4 h-4" />
-                  <span>{{ programSubmitting ? 'Guardando...' : 'Guardar' }}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -607,6 +507,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useAuth } from '../composables/useAuth'
+import { NEWS_CATEGORIES } from '../composables/useNews'
 import { useFirestore } from '../composables/useFirestore'
 import { useSettings } from '../composables/useSettings'
 import { useNewsletter } from '../composables/useNewsletter'
@@ -645,7 +546,7 @@ const newsForm = reactive({
   content: '',
   imageUrl: '',
   date: new Date().toISOString().split('T')[0],
-  category: 'general',
+  category: 'Internacionales', // Valor por defecto
   isFeatured: false
 })
 

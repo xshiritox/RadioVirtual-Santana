@@ -12,6 +12,16 @@ import {
 } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
+// Definir las categorías permitidas
+export const NEWS_CATEGORIES = [
+  'Internacionales',
+  'Economía',
+  'Turismo',
+  'Farándula'
+] as const
+
+export type NewsCategory = typeof NEWS_CATEGORIES[number]
+
 export interface NewsItem {
   id?: string
   title: string
@@ -19,7 +29,7 @@ export interface NewsItem {
   content: string
   imageUrl: string
   date: string
-  category: string
+  category: NewsCategory
   isFeatured: boolean
   createdAt?: any
   updatedAt?: any
