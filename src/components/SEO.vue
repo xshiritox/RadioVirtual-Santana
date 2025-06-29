@@ -138,7 +138,11 @@ const structuredData = {
 onMounted(() => {
   try {
     // Remove existing structured data to avoid duplicates
-    document.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove())
+    document.querySelectorAll('script[type="application/ld+json"]').forEach(el => {
+      if (el.parentNode) {
+        el.parentNode.removeChild(el)
+      }
+    })
     
     // Create new structured data
     const script = document.createElement('script')
